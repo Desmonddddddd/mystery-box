@@ -21,6 +21,8 @@ import { useUserStore } from "@/stores/userStore";
 import { formatPrice, generateReferralCode } from "@/lib/utils";
 import { useGamificationStore } from "@/stores/gamificationStore";
 import type { Rarity } from "@/types";
+import LuckMeter from "@/components/gamification/LuckMeter";
+import DailyRewards from "@/components/gamification/DailyRewards";
 
 type Tab = "items" | "orders";
 
@@ -297,6 +299,12 @@ export default function DashboardPage() {
               <p className="text-xs text-gray-400">{stat.label}</p>
             </motion.div>
           ))}
+        </div>
+
+        {/* ─── Luck Meter & Daily Rewards ────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+          <LuckMeter />
+          <DailyRewards />
         </div>
 
         {/* ─── Tabs ──────────────────────────────────────────── */}

@@ -115,3 +115,85 @@ export function getBestItem(items: RewardItem[]): RewardItem | null {
     return best;
   });
 }
+
+/**
+ * Opens a box with loss protection. Boosts rarity weights when the user has
+ * consecutive low wins or a high luck meter.
+ */
+export function openBoxWithProtection(
+  tier: BoxTier,
+  consecutiveLowWins: number,
+  luckMeter: number
+): RewardItem[] {
+  const box = getBoxByTier(tier);
+  if (!box) {
+    throw new Error(`Unknown box tier: ${tier}`);
+  }
+
+  const [minItems, maxItems] = box.itemCount;
+  const itemCount = getRandomInt(minItems, maxItems);
+
+  // Get base weights and apply protection boosts
+  const baseWeights = { ...rarityWeightsByTier[tier] };
+
+  if (consecutiveLowWins >= 3) {
+    // Shift 15% from common to rare/epic
+    baseWeights.common = Math.max(baseWeights.common - 15, 10);
+    baseWeights.rare += 8;
+    baseWeights.epic += 5;
+    baseWeights.legendary += 2;
+  }
+
+  if (luckMeter >= 80) {
+    // Further boost — shift another 10% from common to epic/legendary
+    baseWeights.common = Math.max(baseWeights.common - 10, 5);
+    baseWeights.epic += 6;
+    baseWeights.legendary += 4;
+  }
+
+  // Normalize weights to sum to 100
+  const total = baseWeights.common + baseWeights.rare + baseWeights.epic + baseWeights.legendary;
+  const scale = 100 / total;
+  baseWeights.common *= scale;
+  baseWeights.rare *= scale;
+  baseWeights.epic *= scale;
+  baseWeights.legendary *= scale;
+
+  const items: RewardItem[] = [];
+
+  for (let i = 0; i < itemCount; i++) {
+    const roll = Math.random() * 100;
+    let rarity: Rarity;
+    let cumulative = 0;
+
+    cumulative += baseWeights.common;
+    if (roll < cumulative) {
+      rarity = "common";
+    } else {
+      cumulative += baseWeights.rare;
+      if (roll < cumulative) {
+        rarity = "rare";
+      } else {
+        cumulative += baseWeights.epic;
+        if (roll < cumulative) {
+          rarity = "epic";
+        } else {
+          rarity = "legendary";
+        }
+      }
+    }
+
+    // If luck meter is maxed out (100), guarantee at least the first item is rare+
+    if (i === 0 && luckMeter >= 100 && rarity === "common") {
+      rarity = "rare";
+    }
+
+    items.push(pickRandomFromRarity(rarity));
+  }
+
+  items.sort((a, b) => {
+    return rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+  });
+
+  return items;
+}

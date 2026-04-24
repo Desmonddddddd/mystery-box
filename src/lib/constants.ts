@@ -1,5 +1,5 @@
 export const SITE_NAME = "MYSTERYX";
-export const SITE_TAGLINE = "The Mystery is Real.";
+export const SITE_TAGLINE = "Crack it. Keep it. Flex it.";
 
 export const WHATSAPP_NUMBER = "919876543210";
 export const WHATSAPP_MESSAGE =
@@ -19,7 +19,12 @@ export const SPIN_SEGMENTS = [
 
 export const NAV_LINKS = [
   { label: "Boxes", href: "/boxes" },
+  { label: "Online", href: "/online" },
   { label: "Virtual", href: "/virtual" },
   { label: "Spin", href: "/spin" },
+  { label: "Blog", href: "/blog" },
   { label: "Dashboard", href: "/dashboard" },
 ] as const;
+
+export const SECRET_BOX_COOLDOWN_HOURS = 24;
+export const CREDITS_CONVERSION_RATE = 0.6; // 60% of item value when converting to credits

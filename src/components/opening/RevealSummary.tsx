@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useUserStore } from "@/stores/userStore";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { RewardItem, BoxTier } from "@/types";
@@ -19,7 +20,9 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
   const box = getBoxByTier(boxTier);
   const totalValue = items.reduce((sum, item) => sum + item.value, 0);
   const [displayedValue, setDisplayedValue] = useState(0);
+  const [converted, setConverted] = useState(false);
   const isProfit = box ? totalValue > box.price : false;
+  const credits = Math.round(totalValue * 0.6);
 
   // Animated value counter
   useEffect(() => {
@@ -116,6 +119,19 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
             View Dashboard
           </GlowButton>
         </Link>
+        <GlowButton
+          variant="secondary"
+          size="md"
+          onClick={() => {
+            if (!converted) {
+              useUserStore.getState().addCredits(credits);
+              setConverted(true);
+            }
+          }}
+          disabled={converted}
+        >
+          {converted ? "Converted! ✓" : `Convert to Credits (₹${credits})`}
+        </GlowButton>
       </div>
     </div>
   );

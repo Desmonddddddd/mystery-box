@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import BoxGrid from "@/components/boxes/BoxGrid";
 
 export const metadata: Metadata = {
-  title: "Mystery Boxes — MYSTERYX",
+  title: "Mystery Trunks — MYSTERYX",
   description:
-    "Choose your destiny. Browse all mystery box tiers from Basic to Ultra — every box is a new adventure packed with surprises.",
+    "Choose your trunk. What's inside is sealed, packed, and waiting for you. The mystery is the point.",
 };
 
 export default function BoxesPage() {
@@ -18,10 +18,14 @@ export default function BoxesPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold neon-text mb-4">
-            Mystery Boxes
+            Mystery Trunks
           </h1>
-          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
-            Choose your destiny. Every box is a new adventure.
+          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-2">
+            Five tiers. One question. How bold are you?
+          </p>
+          <p className="text-sm text-gray-500 max-w-lg mx-auto">
+            No previews. No spoilers. Every trunk pays more than it costs.
+            That&apos;s the only guarantee you need.
           </p>
         </div>
       </section>
@@ -31,59 +35,36 @@ export default function BoxesPage() {
         <BoxGrid />
       </section>
 
-      {/* ─── Tier Explanation ────────────────────────────────── */}
+      {/* ─── Trust Section ───────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="glass rounded-2xl p-8 sm:p-12">
+        <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-8 sm:p-12">
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mb-8 text-center">
-            How Box Tiers Work
+            Our Word
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
               {
-                tier: "Basic",
-                emoji: "📦",
-                color: "text-blue-400",
-                border: "border-blue-500/30",
-                desc: "Everyday surprises. Great odds on common & rare items. The perfect starting point.",
+                emoji: "🔒",
+                title: "Sealed Tight",
+                desc: "No one — not even us — knows which trunk gets what. It's randomized, sealed, and untouched until you crack it.",
               },
               {
-                tier: "Silver",
-                emoji: "🥈",
-                color: "text-cyan-300",
-                border: "border-cyan-400/30",
-                desc: "Better drops, more items. Increased chance for rare and epic rewards.",
+                emoji: "💰",
+                title: "Always Pays More",
+                desc: "The stuff inside is always worth more than what you paid. Always. We don't do L's.",
               },
               {
-                tier: "Gold",
-                emoji: "🥇",
-                color: "text-amber-400",
-                border: "border-amber-400/30",
-                desc: "The sweet spot. High-value items with solid legendary odds. Real wins start here.",
-              },
-              {
-                tier: "Elite",
-                emoji: "💎",
-                color: "text-purple-400",
-                border: "border-purple-500/30",
-                desc: "For high rollers. Epic-tier loaded with smartwatches, designer gear & VIP experiences.",
-              },
-              {
-                tier: "Ultra",
-                emoji: "👑",
-                color: "text-fuchsia-400",
-                border: "border-fuchsia-400/30",
-                desc: "The endgame. Engraved. 25% legendary odds. MacBooks, iPhones, gold chains.",
+                emoji: "🚀",
+                title: "At Your Door, Fast",
+                desc: "2-3 days to ship. Tracked the whole way. The anticipation is half the fun.",
               },
             ].map((item) => (
-              <div
-                key={item.tier}
-                className={`bg-dark-800/50 border ${item.border} rounded-xl p-6 text-center hover:bg-dark-700/50 transition-colors`}
-              >
-                <div className="text-4xl mb-3">{item.emoji}</div>
-                <h3 className={`text-lg font-bold ${item.color} mb-2`}>
-                  {item.tier}
+              <div key={item.title} className="text-center">
+                <span className="text-4xl block mb-3">{item.emoji}</span>
+                <h3 className="text-base font-bold text-white mb-2">
+                  {item.title}
                 </h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
+                <p className="text-sm text-white/40 leading-relaxed">
                   {item.desc}
                 </p>
               </div>

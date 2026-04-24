@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import WelcomeBonus from "@/components/gamification/WelcomeBonus";
+import SecretBox from "@/components/gamification/SecretBox";
 import "./globals.css";
 
 const inter = Inter({
@@ -63,6 +64,7 @@ export default function RootLayout({
         <Footer />
         <WhatsAppButton />
         <WelcomeBonus />
+        <SecretBox />
       </body>
     </html>
   );

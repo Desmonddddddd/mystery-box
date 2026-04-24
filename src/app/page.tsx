@@ -6,6 +6,7 @@ import VirtualTrySection from "@/components/home/VirtualTrySection";
 import HowItWorks from "@/components/home/HowItWorks";
 import CommunityWall from "@/components/home/CommunityWall";
 import Leaderboard from "@/components/home/Leaderboard";
+import WinnerHighlight from "@/components/home/WinnerHighlight";
 
 export default function HomePage() {
   return (
@@ -18,6 +19,7 @@ export default function HomePage() {
       <HowItWorks />
       <CommunityWall />
       <Leaderboard />
+      <WinnerHighlight />
     </div>
   );
 }

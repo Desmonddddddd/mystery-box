@@ -74,10 +74,10 @@ export default function CommunityWall() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-            Community
+            The Wall
           </h2>
           <p className="text-white/50">
-            What do you want in the next drop?
+            Raw reactions. Real people. No filter.
           </p>
         </motion.div>
 
@@ -88,7 +88,7 @@ export default function CommunityWall() {
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Drop your suggestion here..."
+              placeholder="say something..."
               className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 transition-all"
             />
             <button

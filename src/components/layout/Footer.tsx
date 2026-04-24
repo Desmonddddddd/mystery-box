@@ -3,10 +3,12 @@ import { SITE_NAME, SITE_TAGLINE, WHATSAPP_LINK } from "@/lib/constants";
 
 const quickLinks = [
   { label: "Boxes", href: "/boxes" },
+  { label: "Online Game", href: "/online" },
   { label: "Virtual Try", href: "/virtual" },
-  { label: "How It Works", href: "/#how-it-works" },
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "Blog", href: "/blog" },
   { label: "Spin to Win", href: "/spin" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Terms", href: "/terms" },
 ];
 
 export default function Footer() {

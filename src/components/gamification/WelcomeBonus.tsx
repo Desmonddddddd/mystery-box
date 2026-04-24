@@ -101,12 +101,12 @@ export default function WelcomeBonus() {
             ) : (
               <>
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  Welcome to MYSTERYX! <span className="inline-block">🎉</span>
+                  Yo, welcome to the family <span className="inline-block">🐒</span>
                 </h3>
                 <p className="text-white/50 text-sm mb-6">
                   Here&apos;s{" "}
                   <span className="text-pink-400 font-bold">₹200 credits</span>{" "}
-                  to get started on your mystery journey
+                  on the house. Go break something open.
                 </p>
                 <GlowButton
                   onClick={handleClaim}
@@ -114,7 +114,7 @@ export default function WelcomeBonus() {
                   size="lg"
                   className="w-full"
                 >
-                  Claim Your Credits
+                  Grab the Bag
                 </GlowButton>
               </>
             )}

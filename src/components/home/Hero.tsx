@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import GlowButton from "@/components/ui/GlowButton";
 
 export default function Hero() {
@@ -56,8 +57,26 @@ export default function Hero() {
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
           <span className="text-white/60 text-sm font-medium">
-            Live Drops — Over 500 boxes opened today
+            LIVE — 500+ trunks cracked open today
           </span>
+        </motion.div>
+
+        {/* Monkey Mascot */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, type: "spring", stiffness: 80 }}
+          className="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto mb-6"
+        >
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 blur-2xl" />
+          <Image
+            src="/images/ai-generated-illustration-cool-monkey-wearing-pair-headphones-sunglasses-ai-generated-illustration-cool-303183445.webp"
+            alt="MYSTERYX Monkey DJ"
+            width={224}
+            height={224}
+            className="relative rounded-full object-cover border-2 border-white/10"
+            priority
+          />
         </motion.div>
 
         {/* Main heading */}
@@ -72,7 +91,7 @@ export default function Hero() {
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            ₹10 or ₹1,00,000
+            ₹10 or ₹1,00,000 — What Will You Unbox?
           </motion.span>
         </motion.h1>
 
@@ -83,7 +102,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          What Will You Unbox?
+          You won&apos;t know until you open it.
         </motion.p>
 
         {/* Description */}
@@ -93,7 +112,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
         >
-          Shoes. MacBooks. Signed cricket balls. Or just a lighter.
+          Every trunk hits different. And every trunk pays more than it costs. That&apos;s a promise.
         </motion.p>
 
         {/* CTA */}
@@ -103,7 +122,7 @@ export default function Hero() {
           transition={{ delay: 1.0 }}
         >
           <GlowButton href="/boxes" size="lg" variant="primary">
-            Open Your Box
+            Crack Open a Trunk
           </GlowButton>
         </motion.div>
       </div>

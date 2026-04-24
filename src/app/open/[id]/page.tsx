@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import type { BoxTier, RewardItem } from "@/types";
-import { openBox } from "@/lib/lootEngine";
+import { openBox, openBoxWithProtection, calculateLootValue } from "@/lib/lootEngine";
 import { getBoxByTier } from "@/data/boxes";
 import { useUserStore } from "@/stores/userStore";
+import { useGamificationStore } from "@/stores/gamificationStore";
 import { formatPrice } from "@/lib/utils";
 import BoxAnimation from "@/components/opening/BoxAnimation";
 
@@ -21,6 +22,11 @@ export default function OpenBoxPage() {
 
   const addWonItems = useUserStore((s) => s.addWonItems);
   const incrementBoxesOpened = useUserStore((s) => s.incrementBoxesOpened);
+
+  const consecutiveLowWins = useGamificationStore((s) => s.consecutiveLowWins);
+  const luckMeter = useGamificationStore((s) => s.luckMeter);
+  const incrementLuckMeter = useGamificationStore((s) => s.incrementLuckMeter);
+  const resetLuckMeter = useGamificationStore((s) => s.resetLuckMeter);
 
   const [lootItems, setLootItems] = useState<RewardItem[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -36,16 +42,36 @@ export default function OpenBoxPage() {
 
   const handleStartOpening = useCallback(() => {
     if (!box) return;
-    const items = openBox(tier as BoxTier);
+    // Use loss protection if player has been unlucky
+    const items = (consecutiveLowWins >= 3 || luckMeter >= 50)
+      ? openBoxWithProtection(tier as BoxTier, consecutiveLowWins, luckMeter)
+      : openBox(tier as BoxTier);
     setLootItems(items);
     setHasStarted(true);
-  }, [box, tier]);
+  }, [box, tier, consecutiveLowWins, luckMeter]);
 
   const handleComplete = useCallback(() => {
     setIsComplete(true);
     incrementBoxesOpened();
     addWonItems(lootItems);
-  }, [lootItems, incrementBoxesOpened, addWonItems]);
+
+    // Update luck meter based on result quality
+    const totalValue = calculateLootValue(lootItems);
+    const hasEpicOrBetter = lootItems.some(
+      (item) => item.rarity === "epic" || item.rarity === "legendary"
+    );
+
+    if (hasEpicOrBetter) {
+      // Good win — reset luck meter
+      resetLuckMeter();
+    } else if (totalValue < (box?.price ?? 0) * 1.5) {
+      // Low value win — boost luck meter
+      incrementLuckMeter(20);
+    } else {
+      // Decent win — small boost
+      incrementLuckMeter(5);
+    }
+  }, [lootItems, incrementBoxesOpened, addWonItems, box, resetLuckMeter, incrementLuckMeter]);
 
   const handleOpenAnother = useCallback(() => {
     setHasStarted(false);
@@ -73,19 +99,8 @@ export default function OpenBoxPage() {
             <motion.div key="pre" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-center">
               <span className="text-7xl sm:text-8xl block mb-4">{box.emoji}</span>
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">{box.name}</h1>
-              <p className="text-gray-400 text-lg mb-8">{box.tagline}</p>
-              <div className="glass rounded-2xl p-6 max-w-md mx-auto mb-8">
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <p className="text-sm text-gray-400">Items Inside</p>
-                    <p className="text-xl font-bold text-white">{box.itemCount[0]}–{box.itemCount[1]}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Box Value</p>
-                    <p className="text-xl font-bold neon-text">{formatPrice(box.price)}</p>
-                  </div>
-                </div>
-              </div>
+              <p className="text-gray-400 text-lg mb-3">{box.tagline}</p>
+              <p className="text-gray-500 text-sm mb-8 max-w-sm mx-auto">{box.description}</p>
               <button onClick={handleStartOpening} className="px-10 py-4 text-lg font-bold text-white rounded-2xl hover:scale-105 active:scale-95 transition-transform animate-pulse-glow" style={{ background: "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)" }}>
                 <ShoppingBag className="w-5 h-5 inline mr-2" /> Open This Box
               </button>

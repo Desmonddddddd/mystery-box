@@ -203,10 +203,7 @@ export default function VirtualPage() {
                     <h3 className="text-sm font-bold text-white mb-0.5">
                       {box.name}
                     </h3>
-                    <p className="text-xs text-white/40 mb-1">{box.tagline}</p>
-                    <p className="text-xs text-white/30 mb-4">
-                      {box.itemCount[0]}–{box.itemCount[1]} items
-                    </p>
+                    <p className="text-xs text-white/40 mb-4">{box.tagline}</p>
 
                     {/* Price tag */}
                     <p className="text-xs text-white/20 mb-3">

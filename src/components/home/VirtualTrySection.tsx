@@ -54,7 +54,7 @@ export default function VirtualTrySection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-white/60 mb-6">
             <Gift className="w-4 h-4 text-pink-400" />
-            100% Free — No Account Needed
+            Free. No signup. No cap.
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
@@ -64,8 +64,8 @@ export default function VirtualTrySection() {
             </span>
           </h2>
           <p className="text-lg text-white/50 max-w-2xl mx-auto">
-            Open a free virtual box to see what you could win. No purchase
-            needed — just pure unboxing excitement.
+            Crack a virtual trunk for free. See what drops. Get hooked.
+            You&apos;ve been warned.
           </p>
         </motion.div>
 
@@ -128,8 +128,7 @@ export default function VirtualTrySection() {
                 </h3>
                 <p className="text-sm text-white/40 mb-1">{box.tagline}</p>
                 <p className="text-xs text-white/30 mb-5">
-                  {box.itemCount[0]}–{box.itemCount[1]} items •{" "}
-                  {formatPrice(box.price)} real price
+                  {formatPrice(box.price)} trunk
                 </p>
 
                 {/* Try Button */}
@@ -161,7 +160,7 @@ export default function VirtualTrySection() {
             href="/virtual"
             className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors group"
           >
-            Open all 5 box tiers for free
+            Try all 5 trunks for free
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>

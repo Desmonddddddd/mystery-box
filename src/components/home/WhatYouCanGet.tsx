@@ -30,13 +30,13 @@ export default function WhatYouCanGet() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-            What You Can{" "}
+            What&apos;s{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              Get
+              Inside?
             </span>
           </h2>
           <p className="text-white/50 max-w-md mx-auto">
-            Anything you can imagine could be inside.
+            Six categories. Infinite possibilities. Zero spoilers.
           </p>
         </motion.div>
 

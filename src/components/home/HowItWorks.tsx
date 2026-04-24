@@ -7,24 +7,24 @@ import GlassCard from "@/components/ui/GlassCard";
 const steps = [
   {
     number: "01",
-    title: "Choose Your Box",
-    description: "Pick a tier from ₹999 to ₹24,999. Higher tier = bigger rewards.",
+    title: "Pick Your Trunk",
+    description: "Five tiers. ₹999 to ₹24,999. The heavier the trunk, the wilder the ride.",
     Icon: Package,
     gradient: "from-blue-500 to-cyan-400",
     glow: "rgba(59, 130, 246, 0.2)",
   },
   {
     number: "02",
-    title: "Open & Reveal",
-    description: "Watch your items reveal one by one. Every box holds multiple surprises.",
+    title: "Crack It Open",
+    description: "Watch it unlock live. Items drop one by one. Your heart rate will thank us later.",
     Icon: Sparkles,
     gradient: "from-purple-500 to-pink-500",
     glow: "rgba(139, 92, 246, 0.2)",
   },
   {
     number: "03",
-    title: "Win Big",
-    description: "Every box guarantees real value. From stickers to MacBooks — it's all real.",
+    title: "Keep Everything",
+    description: "It's all yours. Every single item. Delivered to your door. No catches.",
     Icon: Trophy,
     gradient: "from-amber-500 to-yellow-400",
     glow: "rgba(245, 158, 11, 0.2)",
@@ -50,7 +50,7 @@ export default function HowItWorks() {
             </span>
           </h2>
           <p className="text-white/50 max-w-md mx-auto">
-            Three simple steps to potential glory.
+            Dead simple. Stupidly exciting.
           </p>
         </motion.div>
 

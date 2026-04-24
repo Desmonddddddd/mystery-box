@@ -42,7 +42,7 @@ export default function Leaderboard() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-            Top Winners Today <span className="inline-block">🏆</span>
+            Today&apos;s Biggest Pulls <span className="inline-block">🏆</span>
           </h2>
         </motion.div>
 

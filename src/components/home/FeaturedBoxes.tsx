@@ -2,10 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { ArrowRight, Lock, Flame } from "lucide-react";
 import { mysteryBoxes } from "@/data/boxes";
 import { formatPrice } from "@/lib/utils";
-import GlassCard from "@/components/ui/GlassCard";
-import GlowButton from "@/components/ui/GlowButton";
 
 export default function FeaturedBoxes() {
   // Featured: Silver, Gold, Elite
@@ -27,79 +26,107 @@ export default function FeaturedBoxes() {
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
             Featured{" "}
             <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-              Drops
+              Trunks
             </span>
           </h2>
-          <p className="text-white/50 max-w-md mx-auto">
-            Our most popular boxes. Every one is a chance to win big.
+          <p className="text-white/40 max-w-md mx-auto">
+            These three move the fastest. Don&apos;t blink.
           </p>
         </motion.div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featured.map((box, index) => (
-            <motion.div
-              key={box.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15, duration: 0.5 }}
-            >
-              <GlassCard className="relative overflow-hidden h-full flex flex-col">
-                {/* Gradient accent on top */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-1 ${box.gradient}`}
-                />
+          {featured.map((box, index) => {
+            const isLowStock = box.stock > 0 && box.stock < 10;
 
-                {/* Emoji */}
-                <div className="text-5xl mb-4 mt-2">{box.emoji}</div>
-
-                {/* Name */}
-                <h3 className="text-xl font-bold text-white mb-1">
-                  {box.name}
-                </h3>
-
-                {/* Tagline */}
-                <p className="text-white/40 text-sm mb-4">{box.tagline}</p>
-
-                {/* Price */}
-                <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-2xl font-bold text-white">
-                    {formatPrice(box.price)}
-                  </span>
-                  {box.originalPrice && (
-                    <span className="text-sm text-white/30 line-through">
-                      {formatPrice(box.originalPrice)}
-                    </span>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="flex items-center gap-4 text-sm text-white/50 mb-6">
-                  <span>{box.itemCount[0]}–{box.itemCount[1]} items</span>
-                  <span className="w-1 h-1 rounded-full bg-white/20" />
-                  <span
-                    className={
-                      box.stock < 10
-                        ? "text-orange-400 font-medium"
-                        : ""
-                    }
+            return (
+              <motion.div
+                key={box.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15, duration: 0.5 }}
+                whileHover={{ scale: 1.03, y: -4 }}
+              >
+                <div className="relative rounded-2xl overflow-hidden h-full flex flex-col bg-[#0c0c14] border border-white/[0.06]">
+                  {/* Trunk visual header */}
+                  <div
+                    className={`relative h-40 ${box.gradient} flex items-center justify-center overflow-hidden`}
                   >
-                    {box.stock} left
-                  </span>
-                </div>
+                    {/* Texture */}
+                    <div
+                      className="absolute inset-0 opacity-[0.08]"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 4px)",
+                      }}
+                    />
+                    <motion.span
+                      className="relative z-10 text-6xl select-none drop-shadow-2xl"
+                      animate={{ y: [0, -3, 0] }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: index * 0.5,
+                      }}
+                    >
+                      {box.emoji}
+                    </motion.span>
 
-                {/* CTA */}
-                <div className="mt-auto">
-                  <Link href="/boxes">
-                    <GlowButton variant="secondary" size="sm" className="w-full">
-                      Explore
-                    </GlowButton>
-                  </Link>
+                    {/* Lock */}
+                    <div className="absolute bottom-2.5 right-2.5 z-10">
+                      <div className="w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center">
+                        <Lock className="w-3 h-3 text-white/40" />
+                      </div>
+                    </div>
+
+                    {isLowStock && (
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/90 text-white text-[9px] font-bold uppercase">
+                          <Flame className="w-2.5 h-2.5" />
+                          {box.stock} Left
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="text-lg font-bold text-white mb-0.5 tracking-tight">
+                      {box.name}
+                    </h3>
+                    <p className="text-white/30 text-[10px] uppercase tracking-wider font-medium mb-3">
+                      {box.tagline}
+                    </p>
+
+                    {/* Price */}
+                    <div className="flex items-baseline gap-2 mb-5">
+                      <span className="text-xl font-black text-white">
+                        {formatPrice(box.price)}
+                      </span>
+                      {box.originalPrice && (
+                        <span className="text-xs text-white/25 line-through">
+                          {formatPrice(box.originalPrice)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* CTA */}
+                    <div className="mt-auto">
+                      <Link
+                        href="/boxes"
+                        className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                      >
+                        View Trunk
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </GlassCard>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
