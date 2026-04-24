@@ -301,6 +301,57 @@ body {
   animation: bounce-in 0.5s ease-out;
 }
 
+/* ─── Spin Wheel Animations ──────────────────────────────── */
+
+@keyframes wheel-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 30px rgba(236, 72, 153, 0.4),
+      0 0 60px rgba(139, 92, 246, 0.2),
+      0 0 100px rgba(59, 130, 246, 0.1);
+  }
+  33% {
+    box-shadow:
+      0 0 40px rgba(139, 92, 246, 0.5),
+      0 0 80px rgba(6, 182, 212, 0.25),
+      0 0 120px rgba(236, 72, 153, 0.1);
+  }
+  66% {
+    box-shadow:
+      0 0 35px rgba(59, 130, 246, 0.45),
+      0 0 70px rgba(236, 72, 153, 0.2),
+      0 0 110px rgba(139, 92, 246, 0.1);
+  }
+}
+
+@keyframes led-chase {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes wheel-spin-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 50px rgba(236, 72, 153, 0.6),
+      0 0 100px rgba(139, 92, 246, 0.4),
+      0 0 150px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 70px rgba(139, 92, 246, 0.7),
+      0 0 140px rgba(6, 182, 212, 0.4),
+      0 0 200px rgba(236, 72, 153, 0.2);
+  }
+}
+
+.animate-wheel-glow {
+  animation: wheel-glow 3s ease-in-out infinite;
+}
+
+.animate-wheel-spin-glow {
+  animation: wheel-spin-glow 1s ease-in-out infinite;
+}
+
 /* ─── Rarity Color Utilities ──────────────────────────────── */
 
 .rarity-common {

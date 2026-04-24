@@ -2,14 +2,15 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Lock, Flame } from "lucide-react";
 import { mysteryBoxes } from "@/data/boxes";
 import { formatPrice } from "@/lib/utils";
 
 export default function FeaturedBoxes() {
-  // Featured: Silver, Gold, Elite
+  // Featured: Gold, Diamond, Elite
   const featured = mysteryBoxes.filter((b) =>
-    ["silver", "gold", "elite"].includes(b.id)
+    ["gold", "diamond", "elite"].includes(b.id)
   );
 
   return (
@@ -51,28 +52,20 @@ export default function FeaturedBoxes() {
                 <div className="relative rounded-2xl overflow-hidden h-full flex flex-col bg-[#0c0c14] border border-white/[0.06]">
                   {/* Trunk visual header */}
                   <div
-                    className={`relative h-40 ${box.gradient} flex items-center justify-center overflow-hidden`}
+                    className={`relative h-44 ${box.gradient} flex items-center justify-center overflow-hidden`}
                   >
-                    {/* Texture */}
-                    <div
-                      className="absolute inset-0 opacity-[0.08]"
-                      style={{
-                        backgroundImage:
-                          "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 4px)",
-                      }}
-                    />
-                    <motion.span
-                      className="relative z-10 text-6xl select-none drop-shadow-2xl"
-                      animate={{ y: [0, -3, 0] }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.5,
-                      }}
-                    >
-                      {box.emoji}
-                    </motion.span>
+                    {/* Box image */}
+                    {box.image && (
+                      <Image
+                        src={box.image}
+                        alt={box.name}
+                        fill
+                        className="object-cover object-center"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    )}
+                    {/* Dark overlay for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c14] via-black/30 to-transparent" />
 
                     {/* Lock */}
                     <div className="absolute bottom-2.5 right-2.5 z-10">
@@ -116,10 +109,17 @@ export default function FeaturedBoxes() {
                     <div className="mt-auto">
                       <Link
                         href="/boxes"
-                        className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                        className="group/btn relative w-full py-2.5 px-4 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                          boxShadow:
+                            "0 0 20px rgba(139, 92, 246, 0.35), 0 0 40px rgba(236, 72, 153, 0.15)",
+                        }}
                       >
-                        View Trunk
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700" />
+                        <span className="relative z-10">View Trunk</span>
+                        <ArrowRight className="w-3.5 h-3.5 relative z-10" />
                       </Link>
                     </div>
                   </div>

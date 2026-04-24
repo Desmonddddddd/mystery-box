@@ -15,7 +15,7 @@ export default function WelcomeBonus() {
     (s) => s.hasClaimedWelcomeBonus
   );
   const claimWelcomeBonus = useGamificationStore((s) => s.claimWelcomeBonus);
-  const addCredits = useUserStore((s) => s.addCredits);
+  const addGems = useUserStore((s) => s.addGems);
 
   useEffect(() => {
     if (!hasClaimedWelcomeBonus) {
@@ -25,7 +25,7 @@ export default function WelcomeBonus() {
   }, [hasClaimedWelcomeBonus]);
 
   const handleClaim = () => {
-    addCredits(200);
+    addGems(200);
     claimWelcomeBonus();
     setClaimed(true);
     setTimeout(() => setShow(false), 2000);
@@ -95,7 +95,7 @@ export default function WelcomeBonus() {
                   Claimed!
                 </h3>
                 <p className="text-green-400 font-semibold">
-                  ₹200 credits added to your account
+                  200 gems added to your account
                 </p>
               </motion.div>
             ) : (
@@ -105,7 +105,7 @@ export default function WelcomeBonus() {
                 </h3>
                 <p className="text-white/50 text-sm mb-6">
                   Here&apos;s{" "}
-                  <span className="text-pink-400 font-bold">₹200 credits</span>{" "}
+                  <span className="text-pink-400 font-bold">200 gems</span>{" "}
                   on the house. Go break something open.
                 </p>
                 <GlowButton

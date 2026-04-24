@@ -40,7 +40,7 @@ export default function ReferralCard() {
   };
 
   const shareMessage = encodeURIComponent(
-    `Join MYSTERYX and get ₹200 credits! Use my referral code: ${code}. Sign up at https://mysteryx.in 🎁`
+    `Join MYSTERYX and get 200 gems! Use my referral code: ${code}. Sign up at https://mysteryx.in 🎁`
   );
 
   return (

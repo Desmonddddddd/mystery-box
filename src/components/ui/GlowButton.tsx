@@ -29,10 +29,10 @@ const variantStyles = {
       "0 0 20px rgba(255, 255, 255, 0.1), 0 0 40px rgba(139, 92, 246, 0.2)",
   },
   danger: {
-    base: "bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold",
-    glow: "0 0 20px rgba(239, 68, 68, 0.4)",
+    base: "bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 text-white font-semibold",
+    glow: "0 0 20px rgba(236, 72, 153, 0.4)",
     hoverGlow:
-      "0 0 30px rgba(239, 68, 68, 0.6), 0 0 60px rgba(239, 68, 68, 0.3)",
+      "0 0 30px rgba(236, 72, 153, 0.6), 0 0 60px rgba(236, 72, 153, 0.3)",
   },
 };
 

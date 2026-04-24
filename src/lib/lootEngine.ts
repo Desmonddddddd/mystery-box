@@ -15,10 +15,11 @@ interface RarityWeights {
 }
 
 const rarityWeightsByTier: Record<BoxTier, RarityWeights> = {
-  basic: { common: 70, rare: 25, epic: 4.5, legendary: 0.5 },
-  silver: { common: 55, rare: 30, epic: 12, legendary: 3 },
-  gold: { common: 40, rare: 35, epic: 18, legendary: 7 },
-  elite: { common: 25, rare: 35, epic: 25, legendary: 15 },
+  silver: { common: 70, rare: 25, epic: 4.5, legendary: 0.5 },
+  gold: { common: 55, rare: 30, epic: 12, legendary: 3 },
+  diamond: { common: 40, rare: 35, epic: 18, legendary: 7 },
+  elite: { common: 30, rare: 35, epic: 22, legendary: 13 },
+  mega: { common: 20, rare: 32, epic: 28, legendary: 20 },
   ultra: { common: 15, rare: 30, epic: 30, legendary: 25 },
 };
 

@@ -7,7 +7,7 @@ import { getBoxByTier } from "@/data/boxes";
 export default function LiveTicker() {
   const tickerItems = recentWinners.map((w) => {
     const box = getBoxByTier(w.boxTier);
-    return `🔥 ${w.username} just won ${w.item} (${formatPrice(w.value)}) from ${box?.name ?? "Mystery Box"}!`;
+    return `🔥 ${w.username} just won ${w.item} (${formatPrice(w.value)}) from ${box?.name ?? "Mystery Trunk"}!`;
   });
 
   // Duplicate for seamless loop

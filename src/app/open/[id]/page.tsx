@@ -13,7 +13,7 @@ import { useGamificationStore } from "@/stores/gamificationStore";
 import { formatPrice } from "@/lib/utils";
 import BoxAnimation from "@/components/opening/BoxAnimation";
 
-const validTiers: BoxTier[] = ["basic", "silver", "gold", "elite", "ultra"];
+const validTiers: BoxTier[] = ["silver", "gold", "diamond", "elite", "mega", "ultra"];
 
 export default function OpenBoxPage() {
   const params = useParams();
@@ -89,7 +89,7 @@ export default function OpenBoxPage() {
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 pt-24 pb-6">
         <Link href="/boxes" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
-          <ArrowLeft className="w-4 h-4" /> Back to Boxes
+          <ArrowLeft className="w-4 h-4" /> Back to Trunks
         </Link>
       </div>
 
@@ -97,12 +97,11 @@ export default function OpenBoxPage() {
         <AnimatePresence mode="wait">
           {!hasStarted && (
             <motion.div key="pre" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-center">
-              <span className="text-7xl sm:text-8xl block mb-4">{box.emoji}</span>
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">{box.name}</h1>
               <p className="text-gray-400 text-lg mb-3">{box.tagline}</p>
               <p className="text-gray-500 text-sm mb-8 max-w-sm mx-auto">{box.description}</p>
               <button onClick={handleStartOpening} className="px-10 py-4 text-lg font-bold text-white rounded-2xl hover:scale-105 active:scale-95 transition-transform animate-pulse-glow" style={{ background: "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)" }}>
-                <ShoppingBag className="w-5 h-5 inline mr-2" /> Open This Box
+                <ShoppingBag className="w-5 h-5 inline mr-2" /> Open This Trunk
               </button>
             </motion.div>
           )}
@@ -130,7 +129,7 @@ export default function OpenBoxPage() {
                   Open Another
                 </button>
                 <Link href="/boxes" className="px-8 py-3 rounded-xl font-semibold text-gray-300 border border-white/10 hover:bg-white/5 transition-colors">
-                  Browse Boxes
+                  Browse Trunks
                 </Link>
               </div>
             </motion.div>

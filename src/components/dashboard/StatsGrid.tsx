@@ -44,7 +44,7 @@ export default function StatsGrid() {
   const [mounted, setMounted] = useState(false);
   const boxesOpened = useUserStore((s) => s.profile.boxesOpened);
   const itemsWon = useUserStore((s) => s.profile.itemsWon);
-  const credits = useUserStore((s) => s.profile.credits);
+  const gems = useUserStore((s) => s.profile.gems);
   const streak = useGamificationStore((s) => s.dailyStreak);
 
   useEffect(() => {
@@ -84,8 +84,8 @@ export default function StatsGrid() {
       />
       <StatCard
         icon={<Coins className="w-5 h-5 text-white" />}
-        label="Credits"
-        value={formatPrice(credits)}
+        label="Gems"
+        value={gems.toLocaleString()}
         gradient="from-amber-500 to-yellow-400"
         glow="rgba(245, 158, 11, 0.1)"
         delay={0.2}

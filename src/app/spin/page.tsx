@@ -2,161 +2,228 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Flame,
-  Clock,
-  Gift,
-  Zap,
-  Trophy,
-  Hand,
-  CircleDot,
-} from "lucide-react";
+import { Flame, Gift, Zap, Trophy, Coins } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import confetti from "canvas-confetti";
 import { useGamificationStore } from "@/stores/gamificationStore";
 import { useUserStore } from "@/stores/userStore";
 import { SPIN_SEGMENTS } from "@/lib/constants";
 
-// --- Speed curve helpers ---
-// The light follows a bell-curve speed profile over the total duration:
-//   slow → fast → slow.  The position is computed via an easing function
-//   so the "total laps" feel consistent regardless of frame rate.
-//
-// We parameterise by "total revolutions" and "duration".
-
-const TOTAL_DURATION_MS = 7000; // ~7 seconds of action
-const TOTAL_REVOLUTIONS = 6; // how many full laps the light does
+// ─── Constants ────────────────────────────────────────────
+const SPIN_COST = 21; // gems per spin
 const SEGMENT_COUNT = SPIN_SEGMENTS.length;
+const SEGMENT_ANGLE = 360 / SEGMENT_COUNT;
+const SPIN_DURATION_MS = 5000;
+const MIN_FULL_SPINS = 5;
+const WHEEL_RADIUS = 180; // SVG coordinate radius
+const CENTER = 200; // SVG viewBox center
+const LABEL_RADIUS = WHEEL_RADIUS * 0.62;
+const LED_COUNT = 24;
 
-/**
- * Easing: slow-fast-slow  (a smooth S-curve).
- * Maps t ∈ [0,1] → progress ∈ [0,1] with ease-in-out-sine.
- */
-function easeInOutSine(t: number): number {
-  return -(Math.cos(Math.PI * t) - 1) / 2;
+// Neon colors for LED ring
+const LED_COLORS = [
+  "#EC4899",
+  "#8B5CF6",
+  "#3B82F6",
+  "#06B6D4",
+  "#10B981",
+  "#F59E0B",
+  "#EF4444",
+  "#EC4899",
+];
+
+// ─── SVG Helpers ──────────────────────────────────────────
+function polarToCartesian(
+  cx: number,
+  cy: number,
+  r: number,
+  angleDeg: number
+) {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
 
-/**
- * Given elapsed ms, return which segment index the light is currently on.
- */
-function getActiveSegment(elapsedMs: number): number {
-  const t = Math.min(elapsedMs / TOTAL_DURATION_MS, 1);
-  const progress = easeInOutSine(t);
-  const totalSegments = TOTAL_REVOLUTIONS * SEGMENT_COUNT;
-  const pos = progress * totalSegments;
-  return Math.floor(pos) % SEGMENT_COUNT;
+function describeArc(
+  cx: number,
+  cy: number,
+  r: number,
+  startAngle: number,
+  endAngle: number
+) {
+  const start = polarToCartesian(cx, cy, r, endAngle);
+  const end = polarToCartesian(cx, cy, r, startAngle);
+  const largeArc = endAngle - startAngle <= 180 ? 0 : 1;
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y} Z`;
 }
 
+function lightenColor(hex: string, amount: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lighten = (c: number) =>
+    Math.min(255, Math.round(c + (255 - c) * amount));
+  return `rgb(${lighten(r)}, ${lighten(g)}, ${lighten(b)})`;
+}
+
+// ─── Lion Animation Variants ──────────────────────────────
+const lionVariants = {
+  idle: {
+    y: [0, -8, 0],
+    rotate: [0, 2, -2, 0],
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" as const },
+  },
+  pushing: {
+    x: [0, 20, -5, 0],
+    rotate: [0, 15, -5, 0],
+    scale: [1, 1.15, 0.95, 1],
+    transition: { duration: 0.6, ease: "easeOut" as const },
+  },
+  celebrating: {
+    scale: [1, 1.3, 0.9, 1.2, 1],
+    y: [0, -20, 0, -12, 0],
+    transition: { duration: 0.8, ease: "easeOut" as const },
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
 export default function SpinPage() {
-  // --- Store hooks ---
-  const canSpinToday = useGamificationStore((s) => s.canSpinToday);
-  const spinResult = useGamificationStore((s) => s.spinResult);
+  // ── Store hooks ──
   const streak = useGamificationStore((s) => s.dailyStreak);
   const recordSpin = useGamificationStore((s) => s.recordSpin);
   const incrementStreak = useGamificationStore((s) => s.incrementStreak);
-  const resetSpinIfNewDay = useGamificationStore((s) => s.resetSpinIfNewDay);
 
-  const addCredits = useUserStore((s) => s.addCredits);
+  const addGems = useUserStore((s) => s.addGems);
+  const spendGems = useUserStore((s) => s.spendGems);
+  const gems = useUserStore((s) => s.profile.gems);
   const isLoggedIn = useUserStore((s) => s.profile.isLoggedIn);
 
-  const hasSpunToday = !canSpinToday();
+  const hasEnoughGems = gems >= SPIN_COST;
 
-  // --- Local state ---
+  // ── Local state ──
   const [mounted, setMounted] = useState(false);
-
-  // Game phases: "idle" | "running" | "stopped"
-  const [phase, setPhase] = useState<"idle" | "running" | "stopped">("idle");
-  const [activeIndex, setActiveIndex] = useState<number>(-1); // lit segment
+  const [phase, setPhase] = useState<"idle" | "spinning" | "done">("idle");
   const [result, setResult] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [lionState, setLionState] = useState<
+    "idle" | "pushing" | "celebrating"
+  >("idle");
 
-  // Refs for the animation loop
-  const rafRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(0);
+  // Rotation state
+  const [rotation, setRotation] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const cumulativeRotation = useRef(0);
+  const pendingWinnerRef = useRef<number>(0);
+  const finalizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // --- Effects ---
+  // ── Mount ──
   useEffect(() => {
     setMounted(true);
-    resetSpinIfNewDay();
-  }, [resetSpinIfNewDay]);
+  }, []);
 
-  // Show persisted spin result from today
-  useEffect(() => {
-    if (mounted && hasSpunToday && spinResult) {
-      setResult(spinResult);
-      setShowResult(true);
-      setPhase("stopped");
-    }
-  }, [mounted, hasSpunToday, spinResult]);
-
-  // Clean up rAF on unmount
+  // Cleanup
   useEffect(() => {
     return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      if (finalizeTimeoutRef.current) clearTimeout(finalizeTimeoutRef.current);
     };
   }, []);
 
-  // --- Animation loop ---
-  const tick = useCallback(
-    (timestamp: number) => {
-      const elapsed = timestamp - startTimeRef.current;
-
-      if (elapsed >= TOTAL_DURATION_MS) {
-        // Time ran out – auto-stop on whatever segment we're on
-        const finalIdx = getActiveSegment(TOTAL_DURATION_MS - 16); // last frame
-        setActiveIndex(finalIdx);
-        setPhase("stopped");
-        finalize(finalIdx);
-        return;
-      }
-
-      const idx = getActiveSegment(elapsed);
-      setActiveIndex(idx);
-      rafRef.current = requestAnimationFrame(tick);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
-  // --- Handlers ---
-
-  /** Start the light */
-  const handleStart = useCallback(() => {
-    if (phase !== "idle" || hasSpunToday) return;
-    setShowResult(false);
-    setResult(null);
-    setPhase("running");
-    startTimeRef.current = performance.now();
-    rafRef.current = requestAnimationFrame(tick);
-  }, [phase, hasSpunToday, tick]);
-
-  /** Stop the light – player clicks */
-  const handleStop = useCallback(() => {
-    if (phase !== "running") return;
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    setPhase("stopped");
-    finalize(activeIndex);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, activeIndex]);
-
-  /** Finalize: record the result, give credits, etc. */
+  // ── Finalize ──
   const finalize = useCallback(
     (segmentIdx: number) => {
       const winner = SPIN_SEGMENTS[segmentIdx];
       if (!winner) return;
       setResult(winner.label);
       setShowResult(true);
+      setPhase("done");
       recordSpin(winner.label);
       incrementStreak();
+
+      // Lion celebrates
+      setLionState("celebrating");
+      setTimeout(() => setLionState("idle"), 1500);
+
       if (winner.value > 0 && isLoggedIn) {
-        addCredits(winner.value);
+        addGems(winner.value);
       }
+
+      // Confetti burst
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.5, x: 0.5 },
+        colors: ["#EC4899", "#8B5CF6", "#3B82F6", "#06B6D4", "#10B981", "#F59E0B"],
+      });
+      // Second burst delayed
+      setTimeout(() => {
+        confetti({
+          particleCount: 60,
+          spread: 100,
+          origin: { y: 0.4, x: 0.5 },
+          colors: ["#EC4899", "#8B5CF6", "#3B82F6"],
+        });
+      }, 300);
+
+      // Reset phase to "idle" after showing the result so user can spin again
+      setTimeout(() => {
+        setPhase("idle");
+      }, 2000);
     },
-    [recordSpin, incrementStreak, addCredits, isLoggedIn],
+    [recordSpin, incrementStreak, addGems, isLoggedIn]
   );
 
-  // --- Derived ---
-  const segmentAngle = 360 / SEGMENT_COUNT;
+  // ── Spin handler ──
+  const handleSpin = useCallback(() => {
+    if (phase !== "idle") return;
 
+    // Charge gems
+    const success = spendGems(SPIN_COST);
+    if (!success) return;
+
+    setShowResult(false);
+    setResult(null);
+    setPhase("spinning");
+
+    // Lion push animation
+    setLionState("pushing");
+    setTimeout(() => setLionState("idle"), 700);
+
+    // Pre-determine winner
+    const winnerIndex = Math.floor(Math.random() * SEGMENT_COUNT);
+    pendingWinnerRef.current = winnerIndex;
+
+    // Calculate target rotation:
+    // The pointer is at the TOP (0 degrees / 12 o'clock).
+    // Segment 0 starts at 0°. To land segment `winnerIndex` at the top,
+    // the wheel needs to rotate so that segment's center is at 0°.
+    const segmentCenterAngle =
+      winnerIndex * SEGMENT_ANGLE + SEGMENT_ANGLE / 2;
+    const fullSpins = MIN_FULL_SPINS * 360;
+    const targetRotation =
+      cumulativeRotation.current + fullSpins + (360 - segmentCenterAngle);
+
+    cumulativeRotation.current = targetRotation;
+    setIsTransitioning(true);
+    setRotation(targetRotation);
+
+    // Fallback timeout in case transitionEnd doesn't fire
+    finalizeTimeoutRef.current = setTimeout(() => {
+      setIsTransitioning(false);
+      finalize(winnerIndex);
+    }, SPIN_DURATION_MS + 300);
+  }, [phase, spendGems, finalize]);
+
+  // ── Transition end handler ──
+  const handleTransitionEnd = useCallback(() => {
+    if (finalizeTimeoutRef.current) {
+      clearTimeout(finalizeTimeoutRef.current);
+      finalizeTimeoutRef.current = null;
+    }
+    setIsTransitioning(false);
+    finalize(pendingWinnerRef.current);
+  }, [finalize]);
+
+  // ── Loading ──
   if (!mounted) {
     return (
       <div className="min-h-screen bg-dark-950 flex items-center justify-center">
@@ -166,267 +233,446 @@ export default function SpinPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-950">
-      {/* Background effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-neon-purple/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-neon-pink/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-0 w-[300px] h-[300px] bg-neon-blue/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-dark-950 overflow-hidden">
+      {/* ── Animated Background Orbs ── */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full bg-neon-purple/10 blur-3xl"
+          animate={{
+            x: ["-10%", "5%", "-10%"],
+            y: ["10%", "-5%", "10%"],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          style={{ top: "10%", left: "20%" }}
+        />
+        <motion.div
+          className="absolute w-[400px] h-[400px] rounded-full bg-neon-pink/10 blur-3xl"
+          animate={{
+            x: ["5%", "-8%", "5%"],
+            y: ["-5%", "10%", "-5%"],
+            scale: [1.1, 0.95, 1.1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          style={{ bottom: "10%", right: "15%" }}
+        />
+        <motion.div
+          className="absolute w-[350px] h-[350px] rounded-full bg-neon-cyan/8 blur-3xl"
+          animate={{
+            x: ["-5%", "8%", "-5%"],
+            y: ["5%", "-8%", "5%"],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          style={{ top: "40%", right: "5%" }}
+        />
+        {/* Dot grid texture */}
+        <div className="absolute inset-0 bg-dot-grid opacity-30" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
-        {/* Header */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+        {/* ── Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold neon-text mb-4">
-            Daily Spin
+            Spin & Win
           </h1>
           <p className="text-lg text-gray-400 max-w-lg mx-auto">
-            Stop the light at the perfect moment to win big! Build your streak
-            for bonus multipliers.
+            Spend <span className="text-neon-yellow font-bold">{SPIN_COST} gems</span> per spin and win amazing prizes! Spin unlimited times.
           </p>
         </motion.div>
 
-        {/* Streak Display */}
+        {/* ── Streak Display ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex items-center justify-center gap-6 mb-12"
+          className="flex items-center justify-center gap-3 sm:gap-5 mb-10 flex-wrap"
         >
-          <div className="glass rounded-xl px-6 py-3 flex items-center gap-3">
-            <Flame className="w-5 h-5 text-neon-red" />
+          <div className="glass rounded-xl px-5 py-3 flex items-center gap-3 border border-neon-yellow/20">
+            <Coins className="w-5 h-5 text-neon-yellow" />
             <div>
-              <p className="text-xs text-gray-400">Daily Streak</p>
-              <p className="text-lg font-bold text-white">{streak} days</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">
+                Gems
+              </p>
+              <p className="text-lg font-bold text-white">{gems}</p>
             </div>
           </div>
-          <div className="glass rounded-xl px-6 py-3 flex items-center gap-3">
-            <Trophy className="w-5 h-5 text-neon-yellow" />
+          <div className="glass rounded-xl px-5 py-3 flex items-center gap-3 border border-neon-pink/20">
+            <Zap className="w-5 h-5 text-neon-pink" />
             <div>
-              <p className="text-xs text-gray-400">Best Streak</p>
-              <p className="text-lg font-bold text-white">{streak} days</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">
+                Cost
+              </p>
+              <p className="text-lg font-bold text-white">{SPIN_COST}/spin</p>
+            </div>
+          </div>
+          <div className="glass rounded-xl px-5 py-3 flex items-center gap-3 border border-neon-red/20">
+            <Flame className="w-5 h-5 text-neon-red" />
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">
+                Streak
+              </p>
+              <p className="text-lg font-bold text-white">{streak}</p>
             </div>
           </div>
         </motion.div>
 
-        {/* ============= SKILL WHEEL ============= */}
+        {/* ════════ WHEEL + LION SECTION ════════ */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
           className="flex flex-col items-center"
         >
-          {/* Wheel container */}
-          <div className="relative mb-8">
-            {/* Outer glow ring */}
-            <div className="absolute -inset-3 rounded-full animate-pulse-glow opacity-60" />
+          {/* Wheel + Lion wrapper — wheel centered, lion is decorative accent */}
+          <div className="relative flex flex-col items-center justify-center mb-8">
+            {/* ──── THE WHEEL ──── */}
+            <div className="relative">
+              {/* Outer neon glow aura */}
+              <div
+                className={`absolute -inset-6 rounded-full ${
+                  phase === "spinning"
+                    ? "animate-wheel-spin-glow"
+                    : "animate-wheel-glow"
+                }`}
+              />
 
-            {/* Stationary wheel */}
-            <div className="w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full relative overflow-hidden border-4 border-white/10">
-              {SPIN_SEGMENTS.map((segment, i) => {
-                const startAngle = i * segmentAngle;
-                const midAngle = startAngle + segmentAngle / 2;
-                const isLit = activeIndex === i;
-
-                return (
-                  <div
-                    key={i}
-                    className="absolute w-full h-full top-0 left-0 transition-[filter] duration-100"
-                    style={{
-                      clipPath: `polygon(50% 50%, ${50 + 50 * Math.sin((startAngle * Math.PI) / 180)}% ${50 - 50 * Math.cos((startAngle * Math.PI) / 180)}%, ${50 + 50 * Math.sin(((startAngle + segmentAngle) * Math.PI) / 180)}% ${50 - 50 * Math.cos(((startAngle + segmentAngle) * Math.PI) / 180)}%)`,
-                      backgroundColor: segment.color,
-                      opacity: phase === "idle" ? 1 : isLit ? 1 : 0.3,
-                      filter: isLit
-                        ? `brightness(1.4) drop-shadow(0 0 18px ${segment.color})`
-                        : "brightness(0.6)",
-                    }}
-                  >
-                    {/* Segment label */}
+              {/* LED Ring */}
+              <div className="absolute -inset-4 pointer-events-none">
+                {Array.from({ length: LED_COUNT }).map((_, i) => {
+                  const angle = (i * 360) / LED_COUNT;
+                  const rad = ((angle - 90) * Math.PI) / 180;
+                  const r = 52;
+                  const x = 50 + r * Math.cos(rad);
+                  const y = 50 + r * Math.sin(rad);
+                  const color = LED_COLORS[i % LED_COLORS.length];
+                  return (
                     <div
-                      className="absolute text-[10px] sm:text-xs font-bold text-white whitespace-nowrap drop-shadow-md"
+                      key={i}
+                      className="absolute w-2 h-2 rounded-full"
                       style={{
-                        top: "20%",
-                        left: "50%",
-                        transformOrigin: "0 calc(50% / 0.3)",
-                        transform: `rotate(${midAngle}deg) translateX(-50%)`,
+                        left: `${x}%`,
+                        top: `${y}%`,
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: color,
+                        boxShadow: `0 0 8px ${color}, 0 0 16px ${color}`,
+                        opacity: phase === "spinning" ? 1 : 0.5,
+                        animation: `led-chase 1.5s ease-in-out infinite`,
+                        animationDelay: `${(i * 1.5) / LED_COUNT}s`,
+                        transition: "opacity 0.3s",
                       }}
-                    >
-                      {segment.label}
-                    </div>
-                  </div>
-                );
-              })}
+                    />
+                  );
+                })}
+              </div>
 
-              {/* Center circle */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-dark-950 border-4 border-white/20 flex items-center justify-center z-10">
-                <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-neon-yellow" />
+              {/* ── Pointer Arrow (top, fixed) ── */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30">
+                <div
+                  className="w-0 h-0"
+                  style={{
+                    borderLeft: "14px solid transparent",
+                    borderRight: "14px solid transparent",
+                    borderTop: "24px solid #EC4899",
+                    filter:
+                      "drop-shadow(0 0 10px rgba(236,72,153,0.8)) drop-shadow(0 0 20px rgba(236,72,153,0.4))",
+                  }}
+                />
+              </div>
+
+              {/* ── SVG Wheel ── */}
+              <div
+                className="w-72 h-72 sm:w-80 sm:h-80 md:w-[26rem] md:h-[26rem] relative"
+                style={{ perspective: "800px" }}
+              >
+                <svg
+                  viewBox="0 0 400 400"
+                  className="w-full h-full drop-shadow-2xl"
+                  style={{
+                    transform: `rotate(${rotation}deg)`,
+                    transition: isTransitioning
+                      ? `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.17, 0.67, 0.12, 0.99)`
+                      : "none",
+                  }}
+                  onTransitionEnd={handleTransitionEnd}
+                >
+                  <defs>
+                    {SPIN_SEGMENTS.map((seg, i) => (
+                      <linearGradient
+                        key={`grad-${i}`}
+                        id={`seg-grad-${i}`}
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
+                        <stop offset="0%" stopColor={seg.color} />
+                        <stop
+                          offset="100%"
+                          stopColor={lightenColor(seg.color, 0.25)}
+                        />
+                      </linearGradient>
+                    ))}
+                    {/* Inner shadow */}
+                    <radialGradient id="inner-shadow" cx="50%" cy="50%" r="50%">
+                      <stop offset="70%" stopColor="transparent" />
+                      <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+                    </radialGradient>
+                    {/* Glow filter for text */}
+                    <filter id="text-glow">
+                      <feDropShadow
+                        dx="0"
+                        dy="0"
+                        stdDeviation="2"
+                        floodColor="rgba(0,0,0,0.8)"
+                      />
+                    </filter>
+                  </defs>
+
+                  {/* Outer border ring */}
+                  <circle
+                    cx={CENTER}
+                    cy={CENTER}
+                    r={WHEEL_RADIUS + 4}
+                    fill="none"
+                    stroke="url(#seg-grad-0)"
+                    strokeWidth="3"
+                    opacity="0.5"
+                  />
+
+                  {/* Segments */}
+                  {SPIN_SEGMENTS.map((seg, i) => {
+                    const startAngle = i * SEGMENT_ANGLE;
+                    const endAngle = startAngle + SEGMENT_ANGLE;
+                    const d = describeArc(
+                      CENTER,
+                      CENTER,
+                      WHEEL_RADIUS,
+                      startAngle,
+                      endAngle
+                    );
+
+                    return (
+                      <path
+                        key={i}
+                        d={d}
+                        fill={`url(#seg-grad-${i})`}
+                        stroke="rgba(255,255,255,0.15)"
+                        strokeWidth="1.5"
+                      />
+                    );
+                  })}
+
+                  {/* Inner shadow overlay */}
+                  <circle
+                    cx={CENTER}
+                    cy={CENTER}
+                    r={WHEEL_RADIUS}
+                    fill="url(#inner-shadow)"
+                  />
+
+                  {/* Segment Labels */}
+                  {SPIN_SEGMENTS.map((seg, i) => {
+                    const midAngle =
+                      i * SEGMENT_ANGLE + SEGMENT_ANGLE / 2;
+                    const pos = polarToCartesian(
+                      CENTER,
+                      CENTER,
+                      LABEL_RADIUS,
+                      midAngle
+                    );
+                    // Rotate text so it reads outward from center
+                    const textRotation = midAngle;
+
+                    return (
+                      <text
+                        key={`label-${i}`}
+                        x={pos.x}
+                        y={pos.y}
+                        fill="white"
+                        fontSize="11"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        transform={`rotate(${textRotation}, ${pos.x}, ${pos.y})`}
+                        filter="url(#text-glow)"
+                        style={{ fontFamily: "var(--font-sans)" }}
+                      >
+                        {seg.label}
+                      </text>
+                    );
+                  })}
+
+                  {/* Center hub */}
+                  <circle
+                    cx={CENTER}
+                    cy={CENTER}
+                    r="38"
+                    fill="#0a0a0f"
+                    stroke="url(#seg-grad-2)"
+                    strokeWidth="3"
+                  />
+                  <circle
+                    cx={CENTER}
+                    cy={CENTER}
+                    r="32"
+                    fill="#0f0f18"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="1"
+                  />
+                  {/* Center text */}
+                  <text
+                    x={CENTER}
+                    y={CENTER}
+                    fill="white"
+                    fontSize="28"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    ⚡
+                  </text>
+                </svg>
               </div>
             </div>
 
-            {/* ---- Rotating indicator dot on the OUTSIDE of the wheel ---- */}
-            {phase === "running" && activeIndex >= 0 && (
-              <div className="absolute inset-0 pointer-events-none">
-                {/* Position the dot around the rim */}
-                <motion.div
-                  className="absolute"
-                  style={{
-                    // Centre of wheel
-                    top: "50%",
-                    left: "50%",
-                    // Move dot to rim position for activeIndex
-                    transform: (() => {
-                      const angle =
-                        activeIndex * segmentAngle + segmentAngle / 2;
-                      const rad = (angle * Math.PI) / 180;
-                      // radius slightly larger than half-wheel to sit outside
-                      const r = 54; // % of half the container
-                      const x = Math.sin(rad) * r;
-                      const y = -Math.cos(rad) * r;
-                      return `translate(calc(-50% + ${x}%), calc(-50% + ${y}%))`;
-                    })(),
-                  }}
-                  key={activeIndex}
-                  initial={{ scale: 0.6, opacity: 0.5 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.06 }}
+            {/* ──── LION MASCOT (absolute positioned, doesn't affect centering) ──── */}
+            <motion.div
+              className="absolute -bottom-4 -right-4 sm:-bottom-2 sm:-right-6 md:-bottom-2 md:-right-8 flex flex-col items-center gap-2 z-20"
+              variants={lionVariants}
+              animate={lionState}
+            >
+              <div className="relative">
+                {/* Lion glow */}
+                <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-neon-purple/40 to-neon-pink/40 blur-xl animate-pulse" />
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-neon-purple/50 shadow-[0_0_20px_rgba(139,92,246,0.5)]">
+                  <Image
+                    src="/images/lion-mascot.webp"
+                    alt="Lion Mascot"
+                    fill
+                    className="object-cover object-center"
+                    sizes="96px"
+                  />
+                </div>
+                {/* Sparkle */}
+                <motion.span
+                  className="absolute -top-1 -right-1 text-sm"
+                  animate={{ y: [0, -3, 0], rotate: [0, 15, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-[0_0_20px_6px_rgba(236,72,153,0.9),0_0_60px_20px_rgba(139,92,246,0.5)]" />
-                </motion.div>
+                  ✨
+                </motion.span>
               </div>
-            )}
-
-            {/* Winning indicator – stays visible after stop */}
-            {phase === "stopped" && activeIndex >= 0 && !hasSpunToday && (
-              <div className="absolute inset-0 pointer-events-none">
-                <motion.div
-                  className="absolute"
-                  style={{
-                    top: "50%",
-                    left: "50%",
-                    transform: (() => {
-                      const angle =
-                        activeIndex * segmentAngle + segmentAngle / 2;
-                      const rad = (angle * Math.PI) / 180;
-                      const r = 54;
-                      const x = Math.sin(rad) * r;
-                      const y = -Math.cos(rad) * r;
-                      return `translate(calc(-50% + ${x}%), calc(-50% + ${y}%))`;
-                    })(),
-                  }}
-                  initial={{ scale: 1.5 }}
-                  animate={{ scale: [1.5, 1, 1.2, 1] }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white shadow-[0_0_24px_8px_rgba(16,185,129,0.9),0_0_80px_30px_rgba(16,185,129,0.4)]" />
-                </motion.div>
-              </div>
-            )}
+              <AnimatePresence>
+                {phase === "idle" && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="text-xs text-neon-purple font-medium"
+                  >
+                    Spin it! 🦁
+                  </motion.p>
+                )}
+                {phase === "spinning" && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="text-xs text-neon-pink font-medium animate-pulse"
+                  >
+                    Let&apos;s goooo! 🔥
+                  </motion.p>
+                )}
+                {phase === "done" && showResult && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="text-xs text-neon-green font-medium"
+                  >
+                    Nice one! 🎉
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
           </div>
 
-          {/* Instruction text */}
-          <AnimatePresence mode="wait">
-            {phase === "running" && (
-              <motion.p
-                key="inst-running"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="text-sm text-neon-pink font-medium mb-4 tracking-wide"
+          {/* ── Action Button ── */}
+          <motion.div className="mb-6 flex justify-center" layout>
+            {phase === "spinning" ? (
+              <div className="px-10 py-4 rounded-2xl font-bold text-lg text-white/60 bg-dark-700 border border-white/10 flex items-center justify-center gap-2">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
+                  <Zap className="w-5 h-5 text-neon-yellow" />
+                </motion.div>
+                Spinning...
+              </div>
+            ) : (
+              <button
+                onClick={handleSpin}
+                disabled={!hasEnoughGems}
+                className={`px-10 py-4 rounded-2xl font-bold text-lg text-white transition-all duration-200 flex items-center gap-2 ${
+                  !hasEnoughGems
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:scale-105 active:scale-95 animate-pulse-glow"
+                }`}
+                style={{
+                  background: !hasEnoughGems
+                    ? "#4B5563"
+                    : "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                }}
               >
-                <CircleDot className="w-4 h-4 inline mr-1 animate-pulse" />
-                Watch the light — tap STOP at the right moment!
-              </motion.p>
+                {!hasEnoughGems ? (
+                  <>
+                    <Coins className="w-5 h-5" />
+                    Not Enough Gems
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-5 h-5" />
+                    SPIN NOW — {SPIN_COST} Gems
+                  </>
+                )}
+              </button>
             )}
-            {phase === "idle" && !hasSpunToday && (
-              <motion.p
-                key="inst-idle"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="text-sm text-gray-500 mb-4"
-              >
-                Press START to begin — then stop the light on your prize!
-              </motion.p>
-            )}
-          </AnimatePresence>
-
-          {/* ---- Action Button ---- */}
-          {phase === "running" ? (
-            /* STOP button — pulsing red */
-            <motion.button
-              key="stop-btn"
-              onClick={handleStop}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="px-12 py-5 rounded-2xl font-extrabold text-xl text-white
-                         flex items-center gap-3
-                         hover:scale-105 active:scale-90 transition-transform"
-              style={{
-                background: "linear-gradient(135deg, #EF4444, #DC2626)",
-                boxShadow:
-                  "0 0 30px 8px rgba(239,68,68,0.5), 0 0 80px 20px rgba(239,68,68,0.2)",
-                animation: "pulse-stop 0.8s ease-in-out infinite",
-              }}
-            >
-              <Hand className="w-6 h-6" />
-              STOP!
-            </motion.button>
-          ) : (
-            <button
-              onClick={handleStart}
-              disabled={hasSpunToday}
-              className={`px-10 py-4 rounded-2xl font-bold text-lg text-white transition-all duration-200 flex items-center gap-2 ${
-                hasSpunToday
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:scale-105 active:scale-95 animate-pulse-glow"
-              }`}
-              style={{
-                background: hasSpunToday
-                  ? "#4B5563"
-                  : "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
-              }}
-            >
-              {hasSpunToday ? (
-                <>
-                  <Clock className="w-5 h-5" />
-                  Come Back Tomorrow!
-                </>
-              ) : phase === "stopped" ? (
-                <>
-                  <Gift className="w-5 h-5" />
-                  Done!
-                </>
-              ) : (
-                <>
-                  <Zap className="w-5 h-5" />
-                  SPIN NOW
-                </>
-              )}
-            </button>
-          )}
+          </motion.div>
         </motion.div>
 
-        {/* Result */}
+        {/* ── Result Card ── */}
         <AnimatePresence>
           {showResult && result && (
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mt-12 text-center"
+              className="mt-8 text-center"
             >
-              <div className="glass rounded-2xl p-8 max-w-md mx-auto border border-neon-purple/20">
-                <div className="w-16 h-16 rounded-full bg-neon-green/10 flex items-center justify-center mx-auto mb-4">
-                  <Gift className="w-8 h-8 text-neon-green" />
-                </div>
+              <div className="glass-strong rounded-2xl p-8 max-w-md mx-auto border border-neon-purple/30 gradient-border">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 12,
+                  }}
+                  className="w-18 h-18 rounded-full bg-gradient-to-br from-neon-green/20 to-neon-cyan/20 flex items-center justify-center mx-auto mb-4 p-4"
+                >
+                  <Gift className="w-10 h-10 text-neon-green" />
+                </motion.div>
                 <h3 className="text-2xl font-bold text-white mb-2">
                   You Won!
                 </h3>
-                <p className="text-3xl font-bold neon-text mb-4">{result}</p>
+                <p className="text-3xl font-black neon-text mb-4">{result}</p>
                 {isLoggedIn ? (
                   <p className="text-sm text-gray-400">
                     Reward has been added to your account.
@@ -447,7 +693,7 @@ export default function SpinPage() {
           )}
         </AnimatePresence>
 
-        {/* Info / Milestones */}
+        {/* ── Milestones ── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -455,48 +701,30 @@ export default function SpinPage() {
           className="mt-16 text-center"
         >
           <p className="text-sm text-gray-500 mb-6">
-            Come back every day for another spin! Build your streak for extra
-            rewards.
+            Each spin costs {SPIN_COST} gems. Win big and keep spinning!
           </p>
-
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
             {[
-              { days: "3 days", reward: "2x Credits", emoji: "🔥" },
+              { days: "3 days", reward: "2x Gems", emoji: "🔥" },
               { days: "7 days", reward: "Free Basic Box", emoji: "📦" },
               { days: "14 days", reward: "Free Silver Box", emoji: "🥈" },
               { days: "30 days", reward: "Free Gold Box", emoji: "🥇" },
             ].map((milestone) => (
-              <div
+              <motion.div
                 key={milestone.days}
-                className="glass rounded-xl p-4 text-center"
+                whileHover={{ scale: 1.05, y: -2 }}
+                className="glass rounded-xl p-4 text-center border border-white/5 hover:border-neon-purple/20 transition-colors"
               >
                 <span className="text-2xl block mb-2">{milestone.emoji}</span>
                 <p className="text-xs text-gray-400">{milestone.days}</p>
                 <p className="text-sm font-semibold text-white">
                   {milestone.reward}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
       </div>
-
-      {/* Pulse animation for the STOP button */}
-      <style jsx>{`
-        @keyframes pulse-stop {
-          0%,
-          100% {
-            box-shadow:
-              0 0 30px 8px rgba(239, 68, 68, 0.5),
-              0 0 80px 20px rgba(239, 68, 68, 0.2);
-          }
-          50% {
-            box-shadow:
-              0 0 50px 14px rgba(239, 68, 68, 0.7),
-              0 0 120px 40px rgba(239, 68, 68, 0.35);
-          }
-        }
-      `}</style>
     </div>
   );
 }

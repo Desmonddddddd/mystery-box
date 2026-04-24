@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import AIChatbot from "@/components/ui/AIChatbot";
 import WelcomeBonus from "@/components/gamification/WelcomeBonus";
 import SecretBox from "@/components/gamification/SecretBox";
+import MusicPlayer from "@/components/ui/MusicPlayer";
 import "./globals.css";
 
 const inter = Inter({
@@ -62,9 +63,10 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
-        <WhatsAppButton />
+        <AIChatbot />
         <WelcomeBonus />
         <SecretBox />
+        <MusicPlayer />
       </body>
     </html>
   );

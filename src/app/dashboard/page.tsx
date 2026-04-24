@@ -32,7 +32,7 @@ export default function DashboardPage() {
   const login = useUserStore((s) => s.login);
   const logout = useUserStore((s) => s.logout);
 
-  const { isLoggedIn, name, phone, credits, boxesOpened, itemsWon } = profile;
+  const { isLoggedIn, name, phone, gems, boxesOpened, itemsWon } = profile;
 
   const referralCode = useGamificationStore((s) => s.referralCode);
   const referralCount = useGamificationStore((s) => s.referralCount);
@@ -234,8 +234,8 @@ export default function DashboardPage() {
       bgColor: "bg-amber-400/10",
     },
     {
-      label: "Credits",
-      value: formatPrice(credits),
+      label: "Gems",
+      value: formatPrice(gems),
       icon: Gift,
       color: "text-neon-green",
       bgColor: "bg-neon-green/10",
@@ -340,7 +340,7 @@ export default function DashboardPage() {
                     No items yet
                   </h3>
                   <p className="text-gray-400 mb-6">
-                    Open some mystery boxes to start your collection!
+                    Open some mystery trunks to start your collection!
                   </p>
                   <Link
                     href="/boxes"
@@ -433,15 +433,17 @@ export default function DashboardPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-lg bg-dark-800 flex items-center justify-center text-xl">
-                            {order.boxId === "basic"
-                              ? "📦"
-                              : order.boxId === "silver"
-                                ? "🥈"
-                                : order.boxId === "gold"
-                                  ? "🥇"
+                            {order.boxId === "silver"
+                              ? "🗃️"
+                              : order.boxId === "gold"
+                                ? "🔒"
+                                : order.boxId === "diamond"
+                                  ? "💎"
                                   : order.boxId === "elite"
-                                    ? "💎"
-                                    : "👑"}
+                                    ? "🏆"
+                                    : order.boxId === "mega"
+                                      ? "🔥"
+                                      : "👑"}
                           </div>
                           <div>
                             <h4 className="font-bold text-white">
@@ -508,7 +510,7 @@ export default function DashboardPage() {
               <p className="text-gray-400 text-sm max-w-lg">
                 Share your referral code with friends. Both of you get{" "}
                 <span className="text-neon-green font-semibold">
-                  200 credits
+                  200 gems
                 </span>{" "}
                 when they make their first purchase!
               </p>

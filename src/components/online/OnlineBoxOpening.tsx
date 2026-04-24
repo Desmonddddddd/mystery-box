@@ -160,8 +160,8 @@ export default function OnlineBoxOpening({
                 rarityColors[result.rarity]
               } text-black text-sm font-bold`}
             >
-              {result.type === "credits"
-                ? `+${result.value} Credits`
+              {result.type === "gems"
+                ? `+${result.value} Gems`
                 : result.type === "discount"
                 ? `${result.value}% Off`
                 : result.type === "cashback"
@@ -174,7 +174,7 @@ export default function OnlineBoxOpening({
           <div className="flex flex-wrap gap-3 justify-center">
             <button
               onClick={onPlayAgain}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm font-semibold hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white text-sm font-semibold hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] active:scale-95 transition-all"
             >
               <RotateCcw className="w-4 h-4" />
               Play Again

@@ -17,10 +17,11 @@ interface RewardPreviewProps {
 const rarityOrder: Rarity[] = ["legendary", "epic", "rare", "common"];
 
 const tierRewardFilter: Record<BoxTier, Rarity[]> = {
-  basic: ["common", "rare"],
-  silver: ["common", "rare", "epic"],
-  gold: ["common", "rare", "epic", "legendary"],
+  silver: ["common", "rare"],
+  gold: ["common", "rare", "epic"],
+  diamond: ["common", "rare", "epic", "legendary"],
   elite: ["rare", "epic", "legendary"],
+  mega: ["rare", "epic", "legendary"],
   ultra: ["rare", "epic", "legendary"],
 };
 

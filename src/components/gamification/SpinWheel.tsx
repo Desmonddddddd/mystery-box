@@ -17,7 +17,7 @@ export default function SpinWheel() {
   const canSpinToday = useGamificationStore((s) => s.canSpinToday);
   const recordSpin = useGamificationStore((s) => s.recordSpin);
   const resetSpinIfNewDay = useGamificationStore((s) => s.resetSpinIfNewDay);
-  const addCredits = useUserStore((s) => s.addCredits);
+  const addGems = useUserStore((s) => s.addGems);
 
   useEffect(() => {
     resetSpinIfNewDay();
@@ -50,12 +50,12 @@ export default function SpinWheel() {
       setResult(segment.label);
       recordSpin(segment.label);
 
-      // Add credits if applicable
-      if (segment.value > 0 && segment.label.includes("Credit")) {
-        addCredits(segment.value);
+      // Add gems if applicable
+      if (segment.value > 0 && segment.label.includes("Gem")) {
+        addGems(segment.value);
       }
     }, 4500);
-  }, [spinning, !canSpinToday(), segmentCount, segmentAngle, recordSpin, addCredits]);
+  }, [spinning, !canSpinToday(), segmentCount, segmentAngle, recordSpin, addGems]);
 
   return (
     <div className="max-w-md mx-auto">

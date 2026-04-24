@@ -1,5 +1,5 @@
 export type Rarity = "common" | "rare" | "epic" | "legendary";
-export type BoxTier = "basic" | "silver" | "gold" | "elite" | "ultra";
+export type BoxTier = "silver" | "gold" | "diamond" | "elite" | "mega" | "ultra";
 
 export interface MysteryBox {
   id: BoxTier;
@@ -15,6 +15,7 @@ export interface MysteryBox {
   glowColor: string;
   borderColor: string;
   emoji: string;
+  image?: string;
 }
 
 export interface RewardItem {
@@ -55,7 +56,7 @@ export interface UserProfile {
   name: string;
   phone: string;
   isLoggedIn: boolean;
-  credits: number;
+  gems: number;
   boxesOpened: number;
   itemsWon: RewardItem[];
 }
@@ -72,12 +73,23 @@ export interface Order {
 }
 
 // ─── Online Game Types ─────────────────────────────────────
-export type OnlineBoxTier = "mini" | "standard" | "mega" | "jackpot";
+export type OnlineBoxTier =
+  | "starter"
+  | "bronze"
+  | "silver"
+  | "gold"
+  | "platinum"
+  | "diamond"
+  | "elite"
+  | "master"
+  | "legendary"
+  | "mythic";
 
 export interface OnlineBox {
   id: OnlineBoxTier;
   name: string;
-  creditCost: number;
+  gemCost: number;
+  itemRange: [number, number];
   description: string;
   tagline: string;
   gradient: string;
@@ -89,7 +101,7 @@ export interface OnlineBox {
 export interface DigitalReward {
   id: string;
   name: string;
-  type: "credits" | "discount" | "freeBox" | "merch" | "cashback";
+  type: "gems" | "discount" | "freeBox" | "merch" | "cashback";
   value: number;
   rarity: Rarity;
   emoji: string;
@@ -113,7 +125,7 @@ export interface BlogPost {
 export interface DailyReward {
   day: number;
   reward: string;
-  credits: number;
+  gems: number;
   emoji: string;
   isMilestone: boolean;
 }

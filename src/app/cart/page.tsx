@@ -86,7 +86,7 @@ export default function CartPage() {
                 Your cart is empty
               </h2>
               <p className="text-gray-400 max-w-md mb-8">
-                Looks like you haven&apos;t added any mystery boxes yet. Browse our
+                Looks like you haven&apos;t added any mystery trunks yet. Browse our
                 collection and start your adventure!
               </p>
               <Link
@@ -98,7 +98,7 @@ export default function CartPage() {
                 }}
               >
                 <Sparkles className="w-5 h-5" />
-                Explore Mystery Boxes
+                Explore Mystery Trunks
               </Link>
             </motion.div>
           ) : (

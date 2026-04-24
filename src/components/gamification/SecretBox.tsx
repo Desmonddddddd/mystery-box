@@ -25,7 +25,7 @@ export default function SecretBox() {
 
   const canFind = useGamificationStore((s) => s.canFindSecretBox);
   const findSecretBox = useGamificationStore((s) => s.findSecretBox);
-  const addCredits = useUserStore((s) => s.addCredits);
+  const addGems = useUserStore((s) => s.addGems);
 
   useEffect(() => {
     if (!canFind()) return;
@@ -50,11 +50,11 @@ export default function SecretBox() {
   const handleClick = () => {
     if (found) return;
 
-    const credits = getRandomInt(50, 200);
-    setReward(credits);
+    const gemReward = getRandomInt(50, 200);
+    setReward(gemReward);
     setFound(true);
     findSecretBox();
-    addCredits(credits);
+    addGems(gemReward);
 
     // Confetti burst
     confetti({
@@ -88,7 +88,7 @@ export default function SecretBox() {
               animate={{ scale: [1, 1.2, 1] }}
               className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-2xl px-4 py-3 text-center shadow-2xl"
             >
-              <p className="text-white font-bold text-lg">+{reward} Credits!</p>
+              <p className="text-white font-bold text-lg">+{reward} Gems!</p>
               <p className="text-white/70 text-xs">Secret Box Found!</p>
             </motion.div>
           ) : (
@@ -107,7 +107,7 @@ export default function SecretBox() {
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-500/40 to-purple-500/40 blur-xl animate-pulse" />
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-pink-500/50 shadow-[0_0_20px_rgba(236,72,153,0.4)]">
                 <Image
-                  src="/images/MYSTER Guy.jpg"
+                  src="/images/mystery-guy.jpg"
                   alt="Secret Box"
                   width={56}
                   height={56}

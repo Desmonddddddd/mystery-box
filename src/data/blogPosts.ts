@@ -126,13 +126,13 @@ Your Luck Meter builds up after consecutive low wins. When it's high, your next 
 Statistically, Gold Boxes offer the best value-to-price ratio. With 18% epic and 7% legendary odds, you're always in the game.
 
 ### Tip #3 — Stack Your Spins
-Don't forget your daily spin! Free credits add up fast. A week of spins can earn you enough for a Mini online box play.
+Don't forget your daily spin! Free gems add up fast. A week of spins can earn you enough for a Mini online box play.
 
 ### Tip #4 — Play the Online Game
-The online mystery box game costs only credits — no real money. Use it to build up free box vouchers and cashback rewards.
+The online mystery box game costs only gems — no real money. Use it to build up free box vouchers and cashback rewards.
 
 ### Tip #5 — Daily Login Rewards
-7 consecutive daily logins = 500 credits + a free Basic Box. That's literally free loot for just showing up!
+7 consecutive daily logins = 500 gems + a free Basic Box. That's literally free loot for just showing up!
 
 ---
 
@@ -177,37 +177,37 @@ We're constantly adding new items, new box tiers, and new features. The online g
   },
   {
     slug: "online-game-launch",
-    title: "NEW: Play Mystery Boxes Online with Credits!",
-    excerpt: "Introducing the MYSTERYX Online Game — spend credits to open digital mystery boxes and win rewards instantly.",
+    title: "NEW: Play Mystery Boxes Online with Gems!",
+    excerpt: "Introducing the MYSTERYX Online Game — spend gems to open digital mystery boxes and win rewards instantly.",
     content: `## A New Way to Play
 
 We heard you: "I want to play more, but I don't want to spend money every time." So we built the Online Game.
 
 ### How It Works
-1. **Earn Credits** — Daily spins, login streaks, referrals, or converting won items
-2. **Pick a Digital Box** — Mini (50), Standard (150), Mega (500), or Jackpot (1000 credits)
-3. **Open & Win** — Instant digital rewards: credits, discounts, free physical boxes, merch, and cashback
+1. **Earn Gems** — Daily spins, login streaks, referrals, or converting won items
+2. **Pick a Digital Box** — Mini (50), Standard (150), Mega (500), or Jackpot (1000 gems)
+3. **Open & Win** — Instant digital rewards: gems, discounts, free physical boxes, merch, and cashback
 
 ### The Tiers
 
-**Mini Box (50 Credits)**
+**Mini Box (50 Gems)**
 Quick fun with small prizes. Great for warming up!
 
-**Standard Box (150 Credits)**
-Solid rewards — decent credit wins and discount codes.
+**Standard Box (150 Gems)**
+Solid rewards — decent gem wins and discount codes.
 
-**Mega Box (500 Credits)**
-High-value territory. Free box vouchers and massive credit drops.
+**Mega Box (500 Gems)**
+High-value territory. Free box vouchers and massive gem drops.
 
-**Jackpot Box (1000 Credits)**
-The ultimate gamble. Legendary rewards include free Elite boxes and 5,000 credit explosions!
+**Jackpot Box (1000 Gems)**
+The ultimate gamble. Legendary rewards include free Elite boxes and 5,000 gem explosions!
 
 ### No Real Money Needed
-The online game runs entirely on credits. Earn them through gameplay or buy physical boxes to get started.
+The online game runs entirely on gems. Earn them through gameplay or buy physical boxes to get started.
 
 ---
 
-*[Play now](/online) — your credits are waiting!*`,
+*[Play now](/virtual) — your gems are waiting!*`,
     author: "MYSTERYX Team",
     date: "2026-04-22",
     category: "news",

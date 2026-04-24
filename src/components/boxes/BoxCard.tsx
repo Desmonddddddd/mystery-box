@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { ShoppingCart, Lock, Flame } from "lucide-react";
 import type { MysteryBox } from "@/types";
 import { formatPrice } from "@/lib/utils";
@@ -38,23 +39,18 @@ export default function BoxCard({ box }: BoxCardProps) {
       <div className="relative bg-[#0c0c14] border border-white/[0.06] rounded-2xl p-0 flex flex-col h-full overflow-hidden">
         {/* Top section — trunk visual */}
         <div className={`relative h-48 ${box.gradient} flex items-center justify-center overflow-hidden`}>
-          {/* Texture overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.08]"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 4px)",
-            }}
-          />
-
-          {/* Trunk icon */}
-          <motion.div
-            className="relative z-10 text-7xl select-none drop-shadow-2xl"
-            animate={{ y: [0, -4, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          >
-            {box.emoji}
-          </motion.div>
+          {/* Box image */}
+          {box.image && (
+            <Image
+              src={box.image}
+              alt={box.name}
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          )}
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c14] via-black/30 to-transparent" />
 
           {/* Lock icon overlay */}
           <div className="absolute bottom-3 right-3 z-10">
@@ -138,10 +134,24 @@ export default function BoxCard({ box }: BoxCardProps) {
             <button
               onClick={() => addItem(box.id)}
               disabled={isSoldOut}
-              className="w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wide uppercase transition-all duration-300 flex items-center justify-center gap-2 bg-white text-black hover:bg-white/90 active:scale-[0.97] disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed"
+              className="group/btn relative w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wide uppercase transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:!shadow-none"
+              style={{
+                background: isSoldOut
+                  ? "rgba(255,255,255,0.06)"
+                  : "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                boxShadow: isSoldOut
+                  ? "none"
+                  : "0 0 20px rgba(139, 92, 246, 0.35), 0 0 40px rgba(236, 72, 153, 0.15)",
+              }}
             >
-              <ShoppingCart className="w-4 h-4" />
-              {isSoldOut ? "Sold Out" : "Add to Cart"}
+              {/* Hover shimmer */}
+              {!isSoldOut && (
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700" />
+              )}
+              <ShoppingCart className="w-4 h-4 relative z-10" />
+              <span className="relative z-10">
+                {isSoldOut ? "Sold Out" : "Add to Cart"}
+              </span>
             </button>
           </div>
         </div>

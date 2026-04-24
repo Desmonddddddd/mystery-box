@@ -4,7 +4,7 @@ import BoxGrid from "@/components/boxes/BoxGrid";
 export const metadata: Metadata = {
   title: "Mystery Trunks — MYSTERYX",
   description:
-    "Choose your trunk. What's inside is sealed, packed, and waiting for you. The mystery is the point.",
+    "Choose your trunk. What's inside is sealed, packed, and waiting for you. Six tiers. One question. How bold are you?",
 };
 
 export default function BoxesPage() {
@@ -21,7 +21,7 @@ export default function BoxesPage() {
             Mystery Trunks
           </h1>
           <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-2">
-            Five tiers. One question. How bold are you?
+            Six tiers. One question. How bold are you?
           </p>
           <p className="text-sm text-gray-500 max-w-lg mx-auto">
             No previews. No spoilers. Every trunk pays more than it costs.
@@ -55,8 +55,8 @@ export default function BoxesPage() {
               },
               {
                 emoji: "🚀",
-                title: "At Your Door, Fast",
-                desc: "2-3 days to ship. Tracked the whole way. The anticipation is half the fun.",
+                title: "At Your Door",
+                desc: "Delivery takes 7-10 days — but it's worth the wait. Every box is handpicked and customized just for you.",
               },
             ].map((item) => (
               <div key={item.title} className="text-center">

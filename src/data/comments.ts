@@ -149,7 +149,7 @@ export const communityComments: Comment[] = [
     id: "c18",
     username: "PoojaKrishna",
     avatar: "P",
-    text: "the daily spin is lowkey goated. free credits every day? say less.",
+    text: "the daily spin is lowkey goated. free gems every day? say less.",
     likes: 136,
     timestamp: hoursAgo(4, 30),
   },

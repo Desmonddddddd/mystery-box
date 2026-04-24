@@ -36,11 +36,11 @@ export default function WhatYouCanGet() {
             </span>
           </h2>
           <p className="text-white/50 max-w-md mx-auto">
-            Six categories. Infinite possibilities. Zero spoilers.
+            Nine categories. Infinite possibilities. Zero spoilers.
           </p>
         </motion.div>
 
-        {/* 2x3 Grid */}
+        {/* 3x3 Grid */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={container}

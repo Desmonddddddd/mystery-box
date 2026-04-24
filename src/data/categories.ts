@@ -85,4 +85,43 @@ export const categories: Category[] = [
     description:
       "Memories hit harder than things. We pack both.",
   },
+  {
+    name: "Gaming",
+    emoji: "🎮",
+    items: [
+      "Gaming accessories & controllers",
+      "Gift cards & top-ups",
+      "Collectible figurines",
+      "Gear that levels you up",
+    ],
+    gradient: "bg-gradient-to-br from-indigo-500 to-blue-600",
+    description:
+      "For gamers who play to win. Loot drops IRL.",
+  },
+  {
+    name: "Adult Fun",
+    emoji: "🔥",
+    items: [
+      "Premium adult toys",
+      "Couple's kits & surprises",
+      "Discreet & tasteful picks",
+      "Stuff they don't sell at the mall",
+    ],
+    gradient: "bg-gradient-to-br from-rose-500 to-red-700",
+    description:
+      "Spice things up. Discreetly packed, zero judgement.",
+  },
+  {
+    name: "Cash & Finance",
+    emoji: "💸",
+    items: [
+      "Real cash vouchers",
+      "Gold coins & bars",
+      "Crypto top-ups",
+      "Investment starter kits",
+    ],
+    gradient: "bg-gradient-to-br from-yellow-500 to-amber-600",
+    description:
+      "Money moves. Some trunks literally pay you back.",
+  },
 ];

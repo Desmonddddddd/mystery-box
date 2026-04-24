@@ -40,7 +40,7 @@ export const recentWinners: WinEntry[] = [
     username: "DeepakPatel",
     item: "JBL Go 3 Portable Speaker",
     value: 2999,
-    boxTier: "basic",
+    boxTier: "silver",
     timestamp: minutesAgo(15),
   },
   {
@@ -75,7 +75,7 @@ export const recentWinners: WinEntry[] = [
     username: "RahulVerma",
     item: "UV Protection Sunglasses",
     value: 299,
-    boxTier: "basic",
+    boxTier: "silver",
     timestamp: minutesAgo(35),
   },
   {

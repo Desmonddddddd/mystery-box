@@ -22,7 +22,7 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
   const [displayedValue, setDisplayedValue] = useState(0);
   const [converted, setConverted] = useState(false);
   const isProfit = box ? totalValue > box.price : false;
-  const credits = Math.round(totalValue * 0.6);
+  const gemValue = Math.round(totalValue * 0.6);
 
   // Animated value counter
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
   }, [totalValue]);
 
   const shareMessage = encodeURIComponent(
-    `I just opened a ${box?.name ?? "Mystery Box"} on MYSTERYX and won items worth ${formatPrice(totalValue)}! 🔥 Check it out: https://mysteryx.in`
+    `I just opened a ${box?.name ?? "Mystery Trunk"} on MYSTERYX and won items worth ${formatPrice(totalValue)}! 🔥 Check it out: https://mysteryx.in`
   );
 
   return (
@@ -124,13 +124,13 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
           size="md"
           onClick={() => {
             if (!converted) {
-              useUserStore.getState().addCredits(credits);
+              useUserStore.getState().addGems(gemValue);
               setConverted(true);
             }
           }}
           disabled={converted}
         >
-          {converted ? "Converted! ✓" : `Convert to Credits (₹${credits})`}
+          {converted ? "Converted! ✓" : `Convert to Gems (${gemValue})`}
         </GlowButton>
       </div>
     </div>

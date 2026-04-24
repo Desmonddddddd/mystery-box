@@ -1,31 +1,39 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Package, Sparkles, Trophy } from "lucide-react";
+import { Package, ShoppingCart, Truck, PartyPopper } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 
 const steps = [
   {
     number: "01",
     title: "Pick Your Trunk",
-    description: "Five tiers. ₹999 to ₹24,999. The heavier the trunk, the wilder the ride.",
+    description: "Choose from six tiers — ₹999 to ₹24,999. Each one packed with surprises worth more than you pay.",
     Icon: Package,
     gradient: "from-blue-500 to-cyan-400",
     glow: "rgba(59, 130, 246, 0.2)",
   },
   {
     number: "02",
-    title: "Crack It Open",
-    description: "Watch it unlock live. Items drop one by one. Your heart rate will thank us later.",
-    Icon: Sparkles,
+    title: "Add to Cart & Pay",
+    description: "Add your trunk to the cart and checkout. Simple, secure, and done in seconds.",
+    Icon: ShoppingCart,
     gradient: "from-purple-500 to-pink-500",
     glow: "rgba(139, 92, 246, 0.2)",
   },
   {
     number: "03",
-    title: "Keep Everything",
-    description: "It's all yours. Every single item. Delivered to your door. No catches.",
-    Icon: Trophy,
+    title: "We Deliver It",
+    description: "We handpick and customize a trunk loaded with exciting stuff — delivered straight to your doorstep.",
+    Icon: Truck,
+    gradient: "from-emerald-500 to-teal-400",
+    glow: "rgba(16, 185, 129, 0.2)",
+  },
+  {
+    number: "04",
+    title: "Unbox & Enjoy",
+    description: "Tear it open! Everything inside is yours to keep. The thrill of the reveal is unmatched.",
+    Icon: PartyPopper,
     gradient: "from-amber-500 to-yellow-400",
     glow: "rgba(245, 158, 11, 0.2)",
   },
@@ -55,9 +63,9 @@ export default function HowItWorks() {
         </motion.div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
           {/* Connecting line (desktop) */}
-          <div className="hidden md:block absolute top-1/2 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-amber-500/30" />
+          <div className="hidden lg:block absolute top-1/2 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-blue-500/30 via-purple-500/30 via-emerald-500/30 to-amber-500/30" />
 
           {steps.map((step, index) => (
             <motion.div

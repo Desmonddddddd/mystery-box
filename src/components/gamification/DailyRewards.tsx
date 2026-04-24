@@ -13,7 +13,7 @@ export default function DailyRewards() {
   const claimedDays = useGamificationStore((s) => s.claimedDailyDays);
   const claimDailyReward = useGamificationStore((s) => s.claimDailyReward);
   const recordDailyLogin = useGamificationStore((s) => s.recordDailyLogin);
-  const addCredits = useUserStore((s) => s.addCredits);
+  const addGems = useUserStore((s) => s.addGems);
 
   useEffect(() => {
     recordDailyLogin();
@@ -26,7 +26,7 @@ export default function DailyRewards() {
     if (!canClaim) return;
     const reward = dailyRewardSchedule.find((r) => r.day === currentDay);
     if (reward) {
-      addCredits(reward.credits);
+      addGems(reward.gems);
       claimDailyReward(currentDay);
     }
   };
@@ -86,7 +86,7 @@ export default function DailyRewards() {
                 </span>
               ) : (
                 <span className="text-[9px] text-white/30">
-                  {day.credits}
+                  {day.gems}
                 </span>
               )}
             </motion.div>

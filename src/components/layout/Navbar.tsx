@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Menu, X } from "lucide-react";
+import { ShoppingCart, Menu, X, Gem } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
 import { NAV_LINKS } from "@/lib/constants";
@@ -18,6 +18,7 @@ export default function Navbar() {
   const cartItems = useCartStore((s) => s.items);
   const isLoggedIn = useUserStore((s) => s.profile.isLoggedIn);
   const userName = useUserStore((s) => s.profile.name);
+  const gems = useUserStore((s) => s.profile.gems);
 
   useEffect(() => {
     setMounted(true);
@@ -79,6 +80,19 @@ export default function Navbar() {
                 )}
               </Link>
 
+              {/* Gems */}
+              {mounted && (
+                <Link
+                  href="/store"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all group"
+                >
+                  <Gem className="w-4 h-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
+                  <span className="text-sm font-bold text-white/80 group-hover:text-white transition-colors">
+                    {gems.toLocaleString()}
+                  </span>
+                </Link>
+              )}
+
               {/* Login / User */}
               {mounted && isLoggedIn ? (
                 <div
@@ -90,7 +104,11 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={() => setLoginOpen(true)}
-                  className="hidden md:block px-4 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 hover:border-white/20 transition-all"
+                  className="hidden md:block px-5 py-1.5 rounded-lg text-white text-sm font-bold tracking-wide transition-all hover:scale-105 active:scale-95"
+                  style={{
+                    background: "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                    boxShadow: "0 0 15px rgba(139, 92, 246, 0.3), 0 0 30px rgba(236, 72, 153, 0.15)",
+                  }}
                 >
                   Login
                 </button>
@@ -137,7 +155,11 @@ export default function Navbar() {
                       setMobileOpen(false);
                       setLoginOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-sm font-medium"
+                    className="w-full px-3 py-2.5 text-center text-white font-bold text-sm rounded-lg transition-all active:scale-95"
+                    style={{
+                      background: "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                      boxShadow: "0 0 15px rgba(139, 92, 246, 0.3)",
+                    }}
                   >
                     Login
                   </button>

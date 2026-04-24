@@ -11,8 +11,8 @@ import GlassCard from "@/components/ui/GlassCard";
 import GlowButton from "@/components/ui/GlowButton";
 import VirtualBoxOpening from "@/components/virtual/VirtualBoxOpening";
 
-// Show 3 tiers on homepage: Basic, Gold, Elite
-const FEATURED_TIERS: BoxTier[] = ["basic", "gold", "elite"];
+// Show 3 tiers on homepage: Gold, Diamond, Elite
+const FEATURED_TIERS: BoxTier[] = ["gold", "diamond", "elite"];
 
 export default function VirtualTrySection() {
   const [selectedTier, setSelectedTier] = useState<BoxTier | null>(null);
@@ -108,20 +108,6 @@ export default function VirtualTrySection() {
                     : undefined
                 }
               >
-                {/* Box Emoji */}
-                <motion.div
-                  className="text-5xl mb-4 select-none"
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: index * 0.4,
-                  }}
-                >
-                  {box.emoji}
-                </motion.div>
-
                 {/* Box Info */}
                 <h3 className="text-lg font-bold text-white mb-1">
                   {box.name}
@@ -160,7 +146,7 @@ export default function VirtualTrySection() {
             href="/virtual"
             className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors group"
           >
-            Try all 5 trunks for free
+            Try all 6 trunks for free
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
