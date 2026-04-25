@@ -38,7 +38,7 @@ export default function BoxCard({ box }: BoxCardProps) {
 
       <div className="relative bg-[#0c0c14] border border-white/[0.06] rounded-2xl p-0 flex flex-col h-full overflow-hidden">
         {/* Top section — trunk visual */}
-        <div className={`relative h-48 ${box.gradient} flex items-center justify-center overflow-hidden`}>
+        <div className={`relative h-64 bg-[#0c0c14] flex items-center justify-center overflow-hidden`}>
           {/* Box image */}
           {box.image && (
             <Image
@@ -93,35 +93,35 @@ export default function BoxCard({ box }: BoxCardProps) {
         </div>
 
         {/* Content section */}
-        <div className="flex flex-col flex-1 p-5">
+        <div className="flex flex-col flex-1 p-4">
           {/* Name */}
-          <h3 className="text-lg font-bold text-white mb-0.5 tracking-tight">
+          <h3 className="text-base font-bold text-white mb-0.5 tracking-tight">
             {box.name}
           </h3>
-          <p className="text-white/30 text-[11px] uppercase tracking-wider font-medium mb-3">
+          <p className="text-white/30 text-[10px] uppercase tracking-wider font-medium mb-2">
             {box.tagline}
           </p>
 
           {/* Description */}
-          <p className="text-white/40 text-sm leading-relaxed mb-5 line-clamp-2">
+          <p className="text-white/40 text-xs leading-relaxed mb-3 line-clamp-2">
             {box.description}
           </p>
 
           {/* Price area */}
           <div className="mt-auto">
-            <div className="flex items-baseline gap-2.5 mb-4">
-              <span className="text-2xl font-black text-white tracking-tight">
+            <div className="flex items-baseline gap-2.5 mb-3">
+              <span className="text-xl font-black text-white tracking-tight">
                 {formatPrice(box.price)}
               </span>
               {box.originalPrice && (
-                <span className="text-xs text-white/25 line-through font-medium">
+                <span className="text-[11px] text-white/25 line-through font-medium">
                   {formatPrice(box.originalPrice)}
                 </span>
               )}
             </div>
 
             {/* Stock bar — subtle */}
-            <div className="w-full h-[3px] bg-white/[0.04] rounded-full mb-4 overflow-hidden">
+            <div className="w-full h-[3px] bg-white/[0.04] rounded-full mb-3 overflow-hidden">
               <div
                 className={`h-full rounded-full ${box.gradient} transition-all duration-700`}
                 style={{
@@ -134,7 +134,7 @@ export default function BoxCard({ box }: BoxCardProps) {
             <button
               onClick={() => addItem(box.id)}
               disabled={isSoldOut}
-              className="group/btn relative w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wide uppercase transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:!shadow-none"
+              className="group/btn relative w-full py-2.5 px-4 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:!shadow-none"
               style={{
                 background: isSoldOut
                   ? "rgba(255,255,255,0.06)"

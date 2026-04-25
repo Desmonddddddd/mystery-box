@@ -52,7 +52,7 @@ export default function FeaturedBoxes() {
                 <div className="relative rounded-2xl overflow-hidden h-full flex flex-col bg-[#0c0c14] border border-white/[0.06]">
                   {/* Trunk visual header */}
                   <div
-                    className={`relative h-44 ${box.gradient} flex items-center justify-center overflow-hidden`}
+                    className={`relative h-64 bg-[#0c0c14] flex items-center justify-center overflow-hidden`}
                   >
                     {/* Box image */}
                     {box.image && (
@@ -85,21 +85,21 @@ export default function FeaturedBoxes() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex flex-col flex-1">
-                    <h3 className="text-lg font-bold text-white mb-0.5 tracking-tight">
+                  <div className="p-4 flex flex-col flex-1">
+                    <h3 className="text-base font-bold text-white mb-0.5 tracking-tight">
                       {box.name}
                     </h3>
-                    <p className="text-white/30 text-[10px] uppercase tracking-wider font-medium mb-3">
+                    <p className="text-white/30 text-[10px] uppercase tracking-wider font-medium mb-2">
                       {box.tagline}
                     </p>
 
                     {/* Price */}
-                    <div className="flex items-baseline gap-2 mb-5">
+                    <div className="flex items-baseline gap-2 mb-3">
                       <span className="text-xl font-black text-white">
                         {formatPrice(box.price)}
                       </span>
                       {box.originalPrice && (
-                        <span className="text-xs text-white/25 line-through">
+                        <span className="text-[11px] text-white/25 line-through">
                           {formatPrice(box.originalPrice)}
                         </span>
                       )}
@@ -109,7 +109,7 @@ export default function FeaturedBoxes() {
                     <div className="mt-auto">
                       <Link
                         href="/boxes"
-                        className="group/btn relative w-full py-2.5 px-4 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden"
+                        className="group/btn relative w-full py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wide transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden"
                         style={{
                           background:
                             "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",

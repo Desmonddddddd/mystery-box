@@ -17,7 +17,7 @@ export const mysteryBoxes: MysteryBox[] = [
       "0 0 25px rgba(148, 163, 184, 0.4), 0 0 50px rgba(34, 211, 238, 0.15)",
     borderColor: "border-cyan-400/30",
     emoji: "🗃️",
-    image: "/images/box-basic.avif",
+    image: "/images/new trunks/new silver trunk.png",
   },
   {
     id: "gold",
@@ -35,7 +35,7 @@ export const mysteryBoxes: MysteryBox[] = [
       "0 0 30px rgba(245, 158, 11, 0.4), 0 0 60px rgba(245, 158, 11, 0.15)",
     borderColor: "border-amber-400/30",
     emoji: "🔒",
-    image: "/images/box-silver.jpg",
+    image: "/images/new trunks/new gold trunk.png",
   },
   {
     id: "diamond",
@@ -53,7 +53,7 @@ export const mysteryBoxes: MysteryBox[] = [
       "0 0 30px rgba(56, 189, 248, 0.4), 0 0 60px rgba(99, 102, 241, 0.15)",
     borderColor: "border-sky-400/30",
     emoji: "💎",
-    image: "/images/box-gold.jpg",
+    image: "/images/new trunks/new diamod trunk.png",
   },
   {
     id: "elite",
@@ -71,7 +71,7 @@ export const mysteryBoxes: MysteryBox[] = [
       "0 0 30px rgba(168, 85, 247, 0.4), 0 0 60px rgba(236, 72, 153, 0.15)",
     borderColor: "border-purple-500/30",
     emoji: "🏆",
-    image: "/images/box-elite.png",
+    image: "/images/new trunks/new elite trunk.png",
   },
   {
     id: "mega",
@@ -89,7 +89,7 @@ export const mysteryBoxes: MysteryBox[] = [
       "0 0 35px rgba(16, 185, 129, 0.4), 0 0 70px rgba(6, 182, 212, 0.15)",
     borderColor: "border-emerald-400/30",
     emoji: "🔥",
-    image: "/images/box-diamond.webp",
+    image: "/images/new trunks/New Mega trunk.png",
   },
   {
     id: "ultra",
@@ -107,6 +107,7 @@ export const mysteryBoxes: MysteryBox[] = [
       "0 0 35px rgba(239, 68, 68, 0.3), 0 0 70px rgba(168, 85, 247, 0.2), 0 0 100px rgba(59, 130, 246, 0.1)",
     borderColor: "border-fuchsia-400/30",
     emoji: "👑",
+    image: "/images/new trunks/new ultra vault.png",
   },
 ];
 
