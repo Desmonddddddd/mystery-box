@@ -1,21 +1,49 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { ShoppingCart, Lock, Flame } from "lucide-react";
+import { ShoppingCart, Lock, Check, ChevronDown } from "lucide-react";
 import type { MysteryBox } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
+import { CONTENTS_GUARANTEE } from "@/data/boxes";
 
 interface BoxCardProps {
   box: MysteryBox;
 }
 
+const ODDS_ROWS: {
+  key: keyof MysteryBox["odds"];
+  label: string;
+  color: string;
+}[] = [
+  { key: "common", label: "Common", color: "text-gray-300" },
+  { key: "rare", label: "Rare", color: "text-sky-300" },
+  { key: "epic", label: "Epic", color: "text-purple-300" },
+  { key: "legendary", label: "Legendary", color: "text-amber-300" },
+];
+
 export default function BoxCard({ box }: BoxCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const isSoldOut = box.stock === 0;
-  const isLowStock = box.stock > 0 && box.stock < 10;
   const isUltra = box.id === "ultra";
+  const [oddsOpen, setOddsOpen] = useState(false);
+  const [added, setAdded] = useState(false);
+  const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimer.current) clearTimeout(addedTimer.current);
+    };
+  }, []);
+
+  const handleAdd = () => {
+    addItem(box.id);
+    setAdded(true);
+    if (addedTimer.current) clearTimeout(addedTimer.current);
+    addedTimer.current = setTimeout(() => setAdded(false), 1200);
+  };
 
   return (
     <motion.div
@@ -59,17 +87,12 @@ export default function BoxCard({ box }: BoxCardProps) {
             </div>
           </div>
 
-          {/* Low stock badge */}
-          {isLowStock && (
+          {/* Honest merchandising badge */}
+          {box.badge && (
             <div className="absolute top-3 left-3 z-10">
-              <motion.div
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/90 text-white text-[10px] font-bold uppercase tracking-wider"
-              >
-                <Flame className="w-3 h-3" />
-                {box.stock} Left
-              </motion.div>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-[10px] font-bold uppercase tracking-wider">
+                {box.badge}
+              </span>
             </div>
           )}
 
@@ -107,50 +130,93 @@ export default function BoxCard({ box }: BoxCardProps) {
             {box.description}
           </p>
 
+          {/* Contents & odds disclosure — expandable */}
+          <div className="mb-3 rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setOddsOpen((o) => !o)}
+              aria-expanded={oddsOpen}
+              className="w-full min-h-[44px] px-3 py-2 flex items-center justify-between gap-2 text-left"
+            >
+              <span className="text-xs font-semibold text-white/60">
+                {box.itemCount[0]}–{box.itemCount[1]} items
+                <span className="text-white/25 font-normal"> · What are the odds?</span>
+              </span>
+              <ChevronDown
+                className={`w-4 h-4 text-white/30 transition-transform duration-200 shrink-0 ${
+                  oddsOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            <AnimatePresence initial={false}>
+              {oddsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-3 pb-3 pt-1 space-y-1.5">
+                    {ODDS_ROWS.map((row) => (
+                      <div
+                        key={row.key}
+                        className="flex items-center justify-between text-[11px]"
+                      >
+                        <span className={`font-medium ${row.color}`}>
+                          {row.label}
+                        </span>
+                        <span className="text-white/50 font-mono">
+                          {box.odds[row.key]}%
+                        </span>
+                      </div>
+                    ))}
+                    <p className="text-[10px] text-white/35 leading-relaxed pt-1.5 border-t border-white/[0.06]">
+                      {CONTENTS_GUARANTEE}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* Price area */}
           <div className="mt-auto">
             <div className="flex items-baseline gap-2.5 mb-3">
               <span className="text-xl font-black text-white tracking-tight">
                 {formatPrice(box.price)}
               </span>
-              {box.originalPrice && (
-                <span className="text-[11px] text-white/25 line-through font-medium">
-                  {formatPrice(box.originalPrice)}
-                </span>
-              )}
-            </div>
-
-            {/* Stock bar — subtle */}
-            <div className="w-full h-[3px] bg-white/[0.04] rounded-full mb-3 overflow-hidden">
-              <div
-                className={`h-full rounded-full ${box.gradient} transition-all duration-700`}
-                style={{
-                  width: `${(box.stock / box.totalStock) * 100}%`,
-                }}
-              />
             </div>
 
             {/* CTA */}
             <button
-              onClick={() => addItem(box.id)}
+              onClick={handleAdd}
               disabled={isSoldOut}
-              className="group/btn relative w-full py-2.5 px-4 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:!shadow-none"
+              className="group/btn relative w-full min-h-[44px] py-2.5 px-4 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-300 flex items-center justify-center gap-2 text-white overflow-hidden active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed disabled:!shadow-none"
               style={{
                 background: isSoldOut
                   ? "rgba(255,255,255,0.06)"
-                  : "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                  : added
+                    ? "linear-gradient(135deg, #10B981, #059669)"
+                    : "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
                 boxShadow: isSoldOut
                   ? "none"
-                  : "0 0 20px rgba(139, 92, 246, 0.35), 0 0 40px rgba(236, 72, 153, 0.15)",
+                  : added
+                    ? "0 0 20px rgba(16, 185, 129, 0.35)"
+                    : "0 0 20px rgba(139, 92, 246, 0.35), 0 0 40px rgba(236, 72, 153, 0.15)",
               }}
             >
               {/* Hover shimmer */}
-              {!isSoldOut && (
+              {!isSoldOut && !added && (
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700" />
               )}
-              <ShoppingCart className="w-4 h-4 relative z-10" />
+              {added ? (
+                <Check className="w-4 h-4 relative z-10" />
+              ) : (
+                <ShoppingCart className="w-4 h-4 relative z-10" />
+              )}
               <span className="relative z-10">
-                {isSoldOut ? "Sold Out" : "Add to Cart"}
+                {isSoldOut ? "Sold Out" : added ? "Added ✓" : "Add to Cart"}
               </span>
             </button>
           </div>

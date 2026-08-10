@@ -1,13 +1,19 @@
 import type { MysteryBox } from "@/types";
 
+/**
+ * Contents guarantee shown wherever odds are disclosed.
+ */
+export const CONTENTS_GUARANTEE =
+  "Combined retail value always meets or exceeds the trunk price.";
+
 export const mysteryBoxes: MysteryBox[] = [
   {
     id: "silver",
     name: "Silver Trunk",
     price: 999,
-    originalPrice: 1499,
     itemCount: [3, 5],
-    stock: 42,
+    odds: { common: 70, rare: 20, epic: 8, legendary: 2 },
+    stock: 100,
     totalStock: 100,
     description:
       "Your first step into the unknown. What's inside? Only one way to find out.",
@@ -23,9 +29,10 @@ export const mysteryBoxes: MysteryBox[] = [
     id: "gold",
     name: "Gold Trunk",
     price: 2499,
-    originalPrice: 3999,
     itemCount: [4, 6],
-    stock: 31,
+    odds: { common: 55, rare: 28, epic: 12, legendary: 5 },
+    badge: "Most Popular",
+    stock: 100,
     totalStock: 100,
     description:
       "A heavier trunk. A deeper mystery. Something worth chasing is locked inside.",
@@ -41,9 +48,10 @@ export const mysteryBoxes: MysteryBox[] = [
     id: "diamond",
     name: "Diamond Trunk",
     price: 4999,
-    originalPrice: 7999,
     itemCount: [5, 7],
-    stock: 18,
+    odds: { common: 45, rare: 30, epic: 17, legendary: 8 },
+    badge: "Best Value",
+    stock: 100,
     totalStock: 100,
     description:
       "Sealed tight. Packed heavy. The kind of trunk people talk about for weeks.",
@@ -59,9 +67,9 @@ export const mysteryBoxes: MysteryBox[] = [
     id: "elite",
     name: "Elite Trunk",
     price: 7999,
-    originalPrice: 12999,
     itemCount: [6, 8],
-    stock: 9,
+    odds: { common: 35, rare: 32, epic: 21, legendary: 12 },
+    stock: 100,
     totalStock: 100,
     description:
       "Reserved for those who dare. This trunk holds what others only dream about.",
@@ -77,9 +85,9 @@ export const mysteryBoxes: MysteryBox[] = [
     id: "mega",
     name: "Mega Trunk",
     price: 9999,
-    originalPrice: 16999,
     itemCount: [7, 9],
-    stock: 6,
+    odds: { common: 28, rare: 32, epic: 25, legendary: 15 },
+    stock: 100,
     totalStock: 100,
     description:
       "Massive. Loaded. Overflowing with premium surprises. This trunk hits different.",
@@ -95,9 +103,9 @@ export const mysteryBoxes: MysteryBox[] = [
     id: "ultra",
     name: "Ultra Vault",
     price: 24999,
-    originalPrice: 39999,
-    itemCount: [8, 10],
-    stock: 5,
+    itemCount: [8, 12],
+    odds: { common: 20, rare: 30, epic: 30, legendary: 20 },
+    stock: 100,
     totalStock: 100,
     description:
       "The final trunk. Personally engraved. Legendary contents. This is the endgame.",

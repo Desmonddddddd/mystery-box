@@ -1,12 +1,21 @@
 export type Rarity = "common" | "rare" | "epic" | "legendary";
 export type BoxTier = "silver" | "gold" | "diamond" | "elite" | "mega" | "ultra";
 
+export interface RarityOdds {
+  common: number;
+  rare: number;
+  epic: number;
+  legendary: number;
+}
+
 export interface MysteryBox {
   id: BoxTier;
   name: string;
   price: number;
   originalPrice?: number;
   itemCount: [number, number]; // [min, max]
+  odds: RarityOdds; // percentages, sum to 100
+  badge?: string; // honest merchandising badge, e.g. "Most Popular"
   stock: number;
   totalStock: number;
   description: string;

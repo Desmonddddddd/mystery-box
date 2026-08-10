@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import BoxGrid from "@/components/boxes/BoxGrid";
+import CouponBanner from "@/components/boxes/CouponBanner";
 
 export const metadata: Metadata = {
   title: "Mystery Trunks — MYSTERYX",
@@ -32,6 +33,7 @@ export default function BoxesPage() {
 
       {/* ─── Box Grid ────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <CouponBanner />
         <BoxGrid />
       </section>
 
