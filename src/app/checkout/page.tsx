@@ -18,7 +18,9 @@ import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
 import { getBoxByTier } from "@/data/boxes";
 import { formatPrice } from "@/lib/utils";
-import PaymentModal from "@/components/ui/PaymentModal";
+import PaymentModal, {
+  type PaymentSuccessDetails,
+} from "@/components/ui/PaymentModal";
 import type { Order } from "@/types";
 
 /* ── Valid coupons (client-side only) ──────────────────── */
@@ -191,7 +193,7 @@ export default function CheckoutPage() {
     setShowPayment(true);
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (details?: PaymentSuccessDetails) => {
     // Log in user if not already
     if (!isLoggedIn) {
       login(formData.name.trim(), formData.phone.trim());
@@ -199,10 +201,14 @@ export default function CheckoutPage() {
 
     // Create orders — record what was actually paid (coupon apportioned across items)
     const paidRatio = subtotal > 0 ? finalTotal / subtotal : 1;
-    cartItems.forEach((item) => {
+    cartItems.forEach((item, index) => {
       if (!item.box) return;
       const order: Order = {
-        id: `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+        id: details?.orderId
+          ? index === 0
+            ? details.orderId
+            : `${details.orderId}-${index + 1}`
+          : `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
         boxId: item.boxId,
         boxName: item.box.name,
         quantity: item.quantity,
@@ -662,6 +668,7 @@ export default function CheckoutPage() {
           onSuccess={handlePaymentSuccess}
           amount={finalTotal}
           itemDescription={itemDescription}
+          physicalOrder
         />
       </div>
     </div>

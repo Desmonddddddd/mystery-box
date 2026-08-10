@@ -7,22 +7,32 @@ import {
   CreditCard,
   Building2,
   Smartphone,
+  Banknote,
   ChevronLeft,
   Shield,
   CheckCircle2,
   Loader2,
+  Truck,
 } from "lucide-react";
 
 /* ── Types ─────────────────────────────────────────────── */
-type PaymentMethod = "upi" | "card" | "netbanking" | null;
+type PaymentMethod = "upi" | "card" | "netbanking" | "cod" | null;
 type Step = "method" | "details" | "processing" | "success";
+
+export interface PaymentSuccessDetails {
+  orderId: string;
+  method: Exclude<PaymentMethod, null>;
+}
 
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (details?: PaymentSuccessDetails) => void;
   amount: number;
   itemDescription: string;
+  /** Physical order mode: enables Cash on Delivery and the order-style
+   *  success screen (ORD number, delivery ETA, "View My Order"). */
+  physicalOrder?: boolean;
 }
 
 /* ── Helpers ───────────────────────────────────────────── */
@@ -39,6 +49,10 @@ function generateTxnId(): string {
   let id = "pay_";
   for (let i = 0; i < 14; i++) id += chars[Math.floor(Math.random() * chars.length)];
   return id;
+}
+
+function generateOrderId(): string {
+  return `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 }
 
 function formatCardNumber(value: string): string {
@@ -73,10 +87,12 @@ export default function PaymentModal({
   onSuccess,
   amount,
   itemDescription,
+  physicalOrder = false,
 }: PaymentModalProps) {
   const [step, setStep] = useState<Step>("method");
   const [method, setMethod] = useState<PaymentMethod>(null);
   const [txnId, setTxnId] = useState("");
+  const [orderId, setOrderId] = useState("");
 
   // Form fields
   const [upiId, setUpiId] = useState("");
@@ -90,6 +106,7 @@ export default function PaymentModal({
     setStep("method");
     setMethod(null);
     setTxnId("");
+    setOrderId("");
     setUpiId("");
     setCardNumber("");
     setCardExpiry("");
@@ -130,6 +147,8 @@ export default function PaymentModal({
         );
       case "netbanking":
         return selectedBank.length > 0;
+      case "cod":
+        return true;
       default:
         return false;
     }
@@ -137,17 +156,30 @@ export default function PaymentModal({
 
   /* ── Process payment ───────────────────────────────────── */
   const processPayment = async () => {
+    if (method === "cod") {
+      // No payment simulation — the order simply confirms as COD
+      setOrderId(generateOrderId());
+      setStep("success");
+      return;
+    }
     setStep("processing");
     // Simulate processing time
     await new Promise((r) => setTimeout(r, 2000 + Math.random() * 1000));
     setTxnId(generateTxnId());
+    setOrderId(generateOrderId());
     setStep("success");
   };
 
   const handleSuccess = () => {
+    const details: PaymentSuccessDetails | undefined =
+      physicalOrder && method
+        ? { orderId, method }
+        : undefined;
     resetModal();
-    onSuccess();
+    onSuccess(details);
   };
+
+  const isCOD = method === "cod";
 
   /* ── Step animations ───────────────────────────────────── */
   const stepVariants = {
@@ -297,6 +329,27 @@ export default function PaymentModal({
                         </div>
                         <ChevronLeft className="w-4 h-4 text-white/20 rotate-180" />
                       </button>
+
+                      {/* Cash on Delivery — physical orders only */}
+                      {physicalOrder && (
+                        <button
+                          onClick={() => handleMethodSelect("cod")}
+                          className="w-full flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group text-left"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                            <Banknote className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors">
+                              Cash on Delivery
+                            </p>
+                            <p className="text-xs text-white/40">
+                              Pay when your trunk arrives
+                            </p>
+                          </div>
+                          <ChevronLeft className="w-4 h-4 text-white/20 rotate-180" />
+                        </button>
+                      )}
                     </div>
 
                     {/* Trust badges */}
@@ -451,11 +504,40 @@ export default function PaymentModal({
                       </div>
                     )}
 
-                    {/* Pay Button */}
+                    {/* COD confirmation */}
+                    {method === "cod" && (
+                      <div>
+                        <p className="text-sm text-white/50 mb-4">
+                          Cash on Delivery
+                        </p>
+                        <div className="rounded-xl bg-white/5 border border-white/10 p-4 space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                              <Banknote className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-white">
+                                Pay {formatCurrency(amount)} in cash on delivery
+                              </p>
+                              <p className="text-xs text-white/40 mt-1">
+                                No advance payment. Keep the exact amount ready
+                                when your trunk arrives.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-white/40 border-t border-white/10 pt-3">
+                            <Truck className="w-3.5 h-3.5 text-white/30" />
+                            Delivery in 5–7 business days
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Pay / Confirm Button */}
                     <button
                       onClick={processPayment}
                       disabled={!isDetailsValid()}
-                      className="w-full mt-5 py-3.5 rounded-xl font-semibold text-white text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="w-full mt-5 py-3.5 min-h-[44px] rounded-xl font-semibold text-white text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                       style={{
                         background: isDetailsValid()
                           ? "linear-gradient(135deg, #3B82F6, #2563EB)"
@@ -465,7 +547,9 @@ export default function PaymentModal({
                           : "none",
                       }}
                     >
-                      Pay {formatCurrency(amount)}
+                      {isCOD
+                        ? "Confirm Order — Cash on Delivery"
+                        : `Pay ${formatCurrency(amount)}`}
                     </button>
                   </motion.div>
                 )}
@@ -553,7 +637,7 @@ export default function PaymentModal({
                       transition={{ delay: 0.4 }}
                       className="text-xl font-bold text-white mb-1"
                     >
-                      Payment Successful!
+                      {isCOD ? "Order Confirmed!" : "Payment Successful!"}
                     </motion.h3>
 
                     <motion.div
@@ -563,17 +647,36 @@ export default function PaymentModal({
                       className="text-center"
                     >
                       <p className="text-sm text-white/50 mb-4">
-                        {formatCurrency(amount)} paid for {itemDescription}
+                        {isCOD
+                          ? `${formatCurrency(amount)} payable on delivery for ${itemDescription}`
+                          : `${formatCurrency(amount)} paid for ${itemDescription}`}
                       </p>
 
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6">
-                        <span className="text-[10px] text-white/30">
-                          TXN ID:
-                        </span>
-                        <span className="text-xs font-mono text-white/60">
-                          {txnId}
-                        </span>
-                      </div>
+                      {physicalOrder ? (
+                        <div className="mb-6 space-y-2">
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                            <span className="text-[10px] text-white/30">
+                              ORDER:
+                            </span>
+                            <span className="text-xs font-mono text-white/70">
+                              {orderId}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-center gap-1.5 text-xs text-white/50">
+                            <Truck className="w-3.5 h-3.5 text-green-400" />
+                            Delivery in 5–7 business days
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6">
+                          <span className="text-[10px] text-white/30">
+                            TXN ID:
+                          </span>
+                          <span className="text-xs font-mono text-white/60">
+                            {txnId}
+                          </span>
+                        </div>
+                      )}
                     </motion.div>
 
                     <motion.button
@@ -581,14 +684,14 @@ export default function PaymentModal({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 }}
                       onClick={handleSuccess}
-                      className="w-full py-3.5 rounded-xl font-semibold text-white text-sm"
+                      className="w-full py-3.5 min-h-[44px] rounded-xl font-semibold text-white text-sm"
                       style={{
                         background:
                           "linear-gradient(135deg, #10B981, #059669)",
                         boxShadow: "0 0 20px rgba(16, 185, 129, 0.3)",
                       }}
                     >
-                      Continue
+                      {physicalOrder ? "View My Order" : "Continue"}
                     </motion.button>
                   </motion.div>
                 )}
