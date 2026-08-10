@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Menu, X, Gem } from "lucide-react";
+import { ShoppingCart, Menu, X, Gem, UserRound } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
 import { NAV_LINKS } from "@/lib/constants";
@@ -66,7 +66,8 @@ export default function Navbar() {
               {/* Cart */}
               <Link
                 href="/cart"
-                className="relative p-2 text-white/60 hover:text-white transition-colors"
+                aria-label="Cart"
+                className="relative min-w-[44px] min-h-[44px] flex items-center justify-center text-white/60 hover:text-white transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {mounted && totalItems > 0 && (
@@ -95,29 +96,45 @@ export default function Navbar() {
 
               {/* Login / User */}
               {mounted && isLoggedIn ? (
-                <div
-                  className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold cursor-pointer"
+                <Link
+                  href="/dashboard"
+                  aria-label="My account"
                   title={userName}
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center"
                 >
-                  {userInitial}
-                </div>
+                  <span className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                    {userInitial}
+                  </span>
+                </Link>
               ) : (
-                <button
-                  onClick={() => setLoginOpen(true)}
-                  className="hidden md:block px-5 py-1.5 rounded-lg text-white text-sm font-bold tracking-wide transition-all hover:scale-105 active:scale-95"
-                  style={{
-                    background: "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
-                    boxShadow: "0 0 15px rgba(139, 92, 246, 0.3), 0 0 30px rgba(236, 72, 153, 0.15)",
-                  }}
-                >
-                  Login
-                </button>
+                <>
+                  {/* Desktop login */}
+                  <button
+                    onClick={() => setLoginOpen(true)}
+                    className="hidden md:block px-5 py-2.5 min-h-[44px] rounded-lg text-white text-sm font-bold tracking-wide transition-all hover:scale-105 active:scale-95"
+                    style={{
+                      background: "linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)",
+                      boxShadow: "0 0 15px rgba(139, 92, 246, 0.3), 0 0 30px rgba(236, 72, 153, 0.15)",
+                    }}
+                  >
+                    Login
+                  </button>
+                  {/* Mobile login — always-visible affordance */}
+                  <button
+                    onClick={() => setLoginOpen(true)}
+                    aria-label="Login"
+                    className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-white/60 hover:text-white transition-colors"
+                  >
+                    <UserRound className="w-5 h-5" />
+                  </button>
+                </>
               )}
 
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="md:hidden p-2 text-white/60 hover:text-white transition-colors"
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-white/60 hover:text-white transition-colors"
               >
                 {mobileOpen ? (
                   <X className="w-5 h-5" />

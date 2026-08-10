@@ -117,8 +117,8 @@ export default function CheckoutPage() {
   const ultraItem = items.find((item) => item.boxId === "ultra");
 
   /* ── Coupon handlers ─────────────────────────────────── */
-  const handleApplyCoupon = () => {
-    const code = couponCode.trim().toUpperCase();
+  const applyCoupon = (codeRaw: string) => {
+    const code = codeRaw.trim().toUpperCase();
     setCouponError("");
 
     if (!code) {
@@ -146,6 +146,8 @@ export default function CheckoutPage() {
     setAppliedCoupon(code);
     setCouponCode("");
   };
+
+  const handleApplyCoupon = () => applyCoupon(couponCode);
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
@@ -298,6 +300,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         handleInputChange("name", e.target.value)
                       }
+                      autoComplete="name"
                       placeholder="John Doe"
                       className={`w-full px-4 py-3 rounded-xl bg-dark-800 border text-white placeholder-gray-500 focus:outline-none transition-colors ${
                         errors.name
@@ -323,6 +326,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         handleInputChange("phone", e.target.value)
                       }
+                      autoComplete="tel"
                       placeholder="9876543210"
                       maxLength={10}
                       className={`w-full px-4 py-3 rounded-xl bg-dark-800 border text-white placeholder-gray-500 focus:outline-none transition-colors ${
@@ -349,6 +353,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         handleInputChange("email", e.target.value)
                       }
+                      autoComplete="email"
                       placeholder="you@example.com"
                       className={`w-full px-4 py-3 rounded-xl bg-dark-800 border text-white placeholder-gray-500 focus:outline-none transition-colors ${
                         errors.email
@@ -390,6 +395,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         handleInputChange("address", e.target.value)
                       }
+                      autoComplete="street-address"
                       placeholder="House No., Street, Landmark"
                       rows={3}
                       className={`w-full px-4 py-3 rounded-xl bg-dark-800 border text-white placeholder-gray-500 focus:outline-none transition-colors resize-none ${
@@ -417,6 +423,7 @@ export default function CheckoutPage() {
                         onChange={(e) =>
                           handleInputChange("city", e.target.value)
                         }
+                        autoComplete="address-level2"
                         placeholder="Mumbai"
                         className={`w-full px-4 py-3 rounded-xl bg-dark-800 border text-white placeholder-gray-500 focus:outline-none transition-colors ${
                           errors.city
@@ -442,6 +449,8 @@ export default function CheckoutPage() {
                         onChange={(e) =>
                           handleInputChange("pincode", e.target.value)
                         }
+                        autoComplete="postal-code"
+                        inputMode="numeric"
                         placeholder="400001"
                         maxLength={6}
                         className={`w-full px-4 py-3 rounded-xl bg-dark-800 border text-white placeholder-gray-500 focus:outline-none transition-colors ${
@@ -615,6 +624,18 @@ export default function CheckoutPage() {
                           {couponError}
                         </p>
                       )}
+                      {/* One-tap first-order coupon */}
+                      <button
+                        type="button"
+                        onClick={() => applyCoupon("MYSTERY10")}
+                        className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg border border-dashed border-pink-500/40 bg-pink-500/5 text-xs text-pink-300 hover:bg-pink-500/10 hover:border-pink-500/60 transition-all active:scale-95"
+                      >
+                        <Tag className="w-3 h-3" />
+                        <span className="font-mono font-bold">MYSTERY10</span>
+                        <span className="text-pink-300/60">
+                          — 10% off · Apply
+                        </span>
+                      </button>
                     </div>
                   )}
                 </div>

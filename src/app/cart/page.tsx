@@ -176,7 +176,8 @@ export default function CartPage() {
                                       item.quantity - 1
                                     )
                                   }
-                                  className="w-8 h-8 rounded-lg bg-dark-800 border border-white/10 flex items-center justify-center text-white hover:bg-dark-700 transition-colors text-sm font-bold"
+                                  aria-label="Decrease quantity"
+                                  className="w-11 h-11 rounded-lg bg-dark-800 border border-white/10 flex items-center justify-center text-white hover:bg-dark-700 transition-colors text-base font-bold"
                                 >
                                   -
                                 </button>
@@ -190,7 +191,8 @@ export default function CartPage() {
                                       item.quantity + 1
                                     )
                                   }
-                                  className="w-8 h-8 rounded-lg bg-dark-800 border border-white/10 flex items-center justify-center text-white hover:bg-dark-700 transition-colors text-sm font-bold"
+                                  aria-label="Increase quantity"
+                                  className="w-11 h-11 rounded-lg bg-dark-800 border border-white/10 flex items-center justify-center text-white hover:bg-dark-700 transition-colors text-base font-bold"
                                 >
                                   +
                                 </button>
@@ -199,13 +201,6 @@ export default function CartPage() {
                                 <p className="text-lg font-bold neon-text">
                                   {formatPrice(item.box.price * item.quantity)}
                                 </p>
-                                {item.box.originalPrice && (
-                                  <p className="text-xs text-gray-500 line-through">
-                                    {formatPrice(
-                                      item.box.originalPrice * item.quantity
-                                    )}
-                                  </p>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -213,7 +208,7 @@ export default function CartPage() {
                           {/* Remove */}
                           <button
                             onClick={() => removeItem(item.boxId)}
-                            className="text-gray-500 hover:text-neon-red transition-colors text-sm shrink-0"
+                            className="w-11 h-11 -mt-2 -mr-2 flex items-center justify-center rounded-lg text-gray-500 hover:text-neon-red hover:bg-white/5 transition-colors text-xl shrink-0"
                             aria-label="Remove item"
                           >
                             &times;
