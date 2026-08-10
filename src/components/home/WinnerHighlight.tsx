@@ -3,43 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Crown, Star } from "lucide-react";
-import type { FeaturedWinner } from "@/types";
+import { featuredWinners } from "@/data/winners";
 import { formatPrice } from "@/lib/utils";
-
-const featuredWinners: FeaturedWinner[] = [
-  {
-    username: "Arjun_M",
-    item: "MacBook Air M2",
-    value: 99999,
-    boxTier: "ultra",
-    avatar: "🦍",
-    period: "daily",
-  },
-  {
-    username: "MeghaS",
-    item: "iPhone 16",
-    value: 79999,
-    boxTier: "ultra",
-    avatar: "🐒",
-    period: "weekly",
-  },
-  {
-    username: "AkashDev",
-    item: "Signed Virat Kohli Bat",
-    value: 75000,
-    boxTier: "ultra",
-    avatar: "🦧",
-    period: "daily",
-  },
-  {
-    username: "IshaSaxena",
-    item: "Callaway Golf Club Set",
-    value: 45000,
-    boxTier: "ultra",
-    avatar: "🐵",
-    period: "weekly",
-  },
-];
 
 export default function WinnerHighlight() {
   const [activeIndex, setActiveIndex] = useState(0);

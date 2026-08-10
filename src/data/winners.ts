@@ -1,4 +1,4 @@
-import type { WinEntry } from "@/types";
+import type { FeaturedWinner, WinEntry } from "@/types";
 
 const now = Date.now();
 const minute = 60 * 1000;
@@ -112,5 +112,41 @@ export const recentWinners: WinEntry[] = [
     value: 45000,
     boxTier: "ultra",
     timestamp: minutesAgo(60),
+  },
+];
+
+// Rotating "Winner Spotlight" entries — the standout pulls from the feed above.
+export const featuredWinners: FeaturedWinner[] = [
+  {
+    username: "Arjun_M",
+    item: "MacBook Air M2",
+    value: 99999,
+    boxTier: "ultra",
+    avatar: "🦍",
+    period: "daily",
+  },
+  {
+    username: "MeghaS",
+    item: "iPhone 16",
+    value: 79999,
+    boxTier: "ultra",
+    avatar: "🐒",
+    period: "weekly",
+  },
+  {
+    username: "AkashDev",
+    item: "Signed Virat Kohli Bat",
+    value: 75000,
+    boxTier: "ultra",
+    avatar: "🦧",
+    period: "daily",
+  },
+  {
+    username: "IshaSaxena",
+    item: "Callaway Golf Club Set",
+    value: 45000,
+    boxTier: "ultra",
+    avatar: "🐵",
+    period: "weekly",
   },
 ];
