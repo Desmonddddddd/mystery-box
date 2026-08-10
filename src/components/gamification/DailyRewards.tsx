@@ -43,7 +43,7 @@ export default function DailyRewards() {
         </span>
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-4 min-[480px]:grid-cols-7 gap-1.5 sm:gap-2">
         {dailyRewardSchedule.map((day) => {
           const isClaimed = claimedDays.includes(day.day);
           const isCurrent = day.day === currentDay && !isClaimed;

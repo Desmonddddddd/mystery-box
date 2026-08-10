@@ -43,7 +43,7 @@ export default function Navbar() {
                 height={36}
                 className="rounded-lg"
               />
-              <span className="text-xl font-black tracking-wider bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
+              <span className="hidden min-[420px]:inline text-xl font-black tracking-wider bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
                 MYSTERYX
               </span>
             </Link>
@@ -62,7 +62,7 @@ export default function Navbar() {
             </div>
 
             {/* Right side */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-4">
               {/* Cart */}
               <Link
                 href="/cart"
@@ -84,7 +84,7 @@ export default function Navbar() {
               {mounted && (
                 <Link
                   href="/store"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all group"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-purple-500/30 transition-all group"
                 >
                   <Gem className="w-4 h-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
                   <span className="text-sm font-bold text-white/80 group-hover:text-white transition-colors">

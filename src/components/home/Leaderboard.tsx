@@ -49,7 +49,7 @@ export default function Leaderboard() {
         <GlassCard glow="rgba(245, 158, 11, 0.1)" hover={false}>
           <div className="space-y-2">
             {/* Header row */}
-            <div className="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider">
+            <div className="grid grid-cols-12 gap-2 sm:gap-4 px-2 sm:px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider">
               <div className="col-span-1">#</div>
               <div className="col-span-4">Player</div>
               <div className="col-span-4">Item Won</div>
@@ -65,7 +65,7 @@ export default function Leaderboard() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className={`grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-xl ${
+                  className={`grid grid-cols-12 gap-2 sm:gap-4 items-center px-2 sm:px-4 py-3 rounded-xl ${
                     style?.bg ?? ""
                   } transition-colors`}
                 >
