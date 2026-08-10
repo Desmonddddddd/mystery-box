@@ -1,10 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import GlowButton from "@/components/ui/GlowButton";
 
+const HERO_IMAGES = [
+  "/images/image 12345.avif",
+  "/images/cyberpunk-panda-meditation-futuristic-ai-generated-digital-art-illustration-meditating-glowing-neon-armor-suit-surrounded-414892934.webp",
+  "/images/hero-lion-neon.jpg",
+  "/images/ai-generated-illustration-cool-monkey-wearing-pair-headphones-sunglasses-ai-generated-illustration-cool-303183445.webp",
+  "/images/hero-lion-purple.jpg",
+];
+
+const ROTATE_MS = 4500;
+
 export default function Hero() {
+  const [heroIdx, setHeroIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(
+      () => setHeroIdx((i) => (i + 1) % HERO_IMAGES.length),
+      ROTATE_MS
+    );
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a0f]">
       {/* Animated gradient orbs */}
@@ -47,14 +68,25 @@ export default function Hero() {
           WebkitMaskComposite: "source-in",
         }}
       >
-        <Image
-          src="/images/image 12345.avif"
-          alt="MYSTERYX Hero"
-          fill
-          className="object-contain object-center lg:object-right"
-          priority
-          quality={90}
-        />
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={heroIdx}
+            className="absolute inset-0"
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+          >
+            <Image
+              src={HERO_IMAGES[heroIdx]}
+              alt="MYSTERYX Hero"
+              fill
+              className="object-contain object-center lg:object-right"
+              priority={heroIdx === 0}
+              quality={90}
+            />
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
 
       {/* Ambient glow behind image area */}
@@ -110,9 +142,9 @@ export default function Hero() {
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
-              ₹1 to
+              $1 to
               <br />
-              ₹10,00,000
+              $1 Million
             </motion.h1>
 
             <motion.p
