@@ -33,6 +33,18 @@ const LED_COLORS = [
   "#EC4899",
 ];
 
+// ─── Weighted winner selection ────────────────────────────
+const TOTAL_SPIN_WEIGHT = SPIN_SEGMENTS.reduce((sum, seg) => sum + seg.weight, 0);
+
+function pickWeightedSegmentIndex(): number {
+  let roll = Math.random() * TOTAL_SPIN_WEIGHT;
+  for (let i = 0; i < SPIN_SEGMENTS.length; i++) {
+    roll -= SPIN_SEGMENTS[i].weight;
+    if (roll < 0) return i;
+  }
+  return SPIN_SEGMENTS.length - 1;
+}
+
 // ─── SVG Helpers ──────────────────────────────────────────
 function polarToCartesian(
   cx: number,
@@ -103,6 +115,7 @@ export default function SpinPage() {
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<"idle" | "spinning" | "done">("idle");
   const [result, setResult] = useState<string | null>(null);
+  const [resultValue, setResultValue] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [lionState, setLionState] = useState<
     "idle" | "pushing" | "celebrating"
@@ -133,6 +146,7 @@ export default function SpinPage() {
       const winner = SPIN_SEGMENTS[segmentIdx];
       if (!winner) return;
       setResult(winner.label);
+      setResultValue(winner.value);
       setShowResult(true);
       setPhase("done");
       recordSpin(winner.label);
@@ -144,24 +158,24 @@ export default function SpinPage() {
 
       if (winner.value > 0) {
         addGems(winner.value);
-      }
 
-      // Confetti burst
-      confetti({
-        particleCount: 120,
-        spread: 80,
-        origin: { y: 0.5, x: 0.5 },
-        colors: ["#EC4899", "#8B5CF6", "#3B82F6", "#06B6D4", "#10B981", "#F59E0B"],
-      });
-      // Second burst delayed
-      setTimeout(() => {
+        // Confetti burst — only when the spin actually paid out
         confetti({
-          particleCount: 60,
-          spread: 100,
-          origin: { y: 0.4, x: 0.5 },
-          colors: ["#EC4899", "#8B5CF6", "#3B82F6"],
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.5, x: 0.5 },
+          colors: ["#EC4899", "#8B5CF6", "#3B82F6", "#06B6D4", "#10B981", "#F59E0B"],
         });
-      }, 300);
+        // Second burst delayed
+        setTimeout(() => {
+          confetti({
+            particleCount: 60,
+            spread: 100,
+            origin: { y: 0.4, x: 0.5 },
+            colors: ["#EC4899", "#8B5CF6", "#3B82F6"],
+          });
+        }, 300);
+      }
 
       // Reset phase to "idle" after showing the result so user can spin again
       setTimeout(() => {
@@ -187,8 +201,8 @@ export default function SpinPage() {
     setLionState("pushing");
     setTimeout(() => setLionState("idle"), 700);
 
-    // Pre-determine winner
-    const winnerIndex = Math.floor(Math.random() * SEGMENT_COUNT);
+    // Pre-determine winner (weighted — see SPIN_SEGMENTS in constants.ts)
+    const winnerIndex = pickWeightedSegmentIndex();
     pendingWinnerRef.current = winnerIndex;
 
     // Calculate target rotation:
@@ -669,11 +683,13 @@ export default function SpinPage() {
                   <Gift className="w-10 h-10 text-neon-green" />
                 </motion.div>
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  You Won!
+                  {resultValue > 0 ? "You Won!" : "No Luck This Time"}
                 </h3>
                 <p className="text-3xl font-black neon-text mb-4">{result}</p>
                 <p className="text-sm text-gray-400">
-                  Reward has been added to your account.
+                  {resultValue > 0
+                    ? `${resultValue.toLocaleString()} gems added to your balance.`
+                    : "No prize on this spin — better luck on the next one!"}
                 </p>
               </div>
             </motion.div>
