@@ -19,6 +19,11 @@ export default function LiveTicker() {
       <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0a0a0f] to-transparent z-10" />
       <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0a0a0f] to-transparent z-10" />
 
+      {/* Honesty label — these wins are illustrative, not live data */}
+      <span className="absolute right-2 top-1/2 -translate-y-1/2 z-20 px-1.5 py-0.5 rounded bg-black/70 text-[9px] uppercase tracking-wider text-white/30 pointer-events-none">
+        Simulated preview
+      </span>
+
       <div className="flex animate-ticker whitespace-nowrap">
         {allItems.map((text, i) => (
           <span

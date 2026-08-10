@@ -10,19 +10,68 @@ import GlassCard from "@/components/ui/GlassCard";
 
 type SortMode = "latest" | "popular";
 
+const STORAGE_KEY = "myx-wall";
+
+interface WallState {
+  posts: Comment[];
+  liked: string[];
+}
+
+function loadWallState(): WallState {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<WallState>;
+      return {
+        posts: Array.isArray(parsed.posts) ? parsed.posts : [],
+        liked: Array.isArray(parsed.liked) ? parsed.liked : [],
+      };
+    }
+  } catch {
+    // corrupt or unavailable storage — start fresh
+  }
+  return { posts: [], liked: [] };
+}
+
 export default function CommunityWall() {
-  const [localComments, setLocalComments] = useState<Comment[]>(communityComments);
+  const [userPosts, setUserPosts] = useState<Comment[]>([]);
+  const [likedIds, setLikedIds] = useState<string[]>([]);
   const [sort, setSort] = useState<SortMode>("latest");
   const [showAll, setShowAll] = useState(false);
   const [newComment, setNewComment] = useState("");
 
   // Relative times depend on Date.now(), so the server-rendered strings can
   // disagree with the client's ("12m ago" vs "29m ago") and trigger a
-  // hydration mismatch. Render them only after mount.
+  // hydration mismatch. Render them only after mount. Persisted wall state
+  // is also loaded after mount for the same reason.
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    const stored = loadWallState();
+    setUserPosts(stored.posts);
+    setLikedIds(stored.liked);
     setMounted(true);
   }, []);
+
+  // Persist likes + posts so user actions survive refresh
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ posts: userPosts, liked: likedIds } satisfies WallState)
+      );
+    } catch {
+      // ignore quota/unavailable errors
+    }
+  }, [mounted, userPosts, likedIds]);
+
+  const localComments = useMemo<Comment[]>(() => {
+    const withLikes = (c: Comment): Comment =>
+      likedIds.includes(c.id)
+        ? { ...c, likes: c.likes + 1, isLiked: true }
+        : { ...c, isLiked: false };
+    return [...userPosts.map(withLikes), ...communityComments.map(withLikes)];
+  }, [userPosts, likedIds]);
 
   const sorted = useMemo(() => {
     const copy = [...localComments];
@@ -41,16 +90,8 @@ export default function CommunityWall() {
   );
 
   const handleLike = (id: string) => {
-    setLocalComments((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              likes: c.isLiked ? c.likes - 1 : c.likes + 1,
-              isLiked: !c.isLiked,
-            }
-          : c
-      )
+    setLikedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
@@ -67,7 +108,7 @@ export default function CommunityWall() {
       timestamp: new Date().toISOString(),
     };
 
-    setLocalComments((prev) => [comment, ...prev]);
+    setUserPosts((prev) => [comment, ...prev]);
     setNewComment("");
   };
 
@@ -84,8 +125,11 @@ export default function CommunityWall() {
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
             The Wall
           </h2>
-          <p className="text-white/50">
+          <p className="text-white/50 mb-2">
             Raw reactions. Real people. No filter.
+          </p>
+          <p className="text-[11px] uppercase tracking-wider text-white/25">
+            Seed posts are a simulated preview · your posts stay on this device
           </p>
         </motion.div>
 
@@ -101,7 +145,7 @@ export default function CommunityWall() {
             />
             <button
               type="submit"
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity flex-shrink-0"
+              className="px-5 py-3 min-h-[44px] rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity flex-shrink-0"
             >
               Post
             </button>
@@ -112,7 +156,7 @@ export default function CommunityWall() {
         <div className="flex items-center gap-2 mb-6">
           <button
             onClick={() => setSort("latest")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`px-4 py-2.5 min-h-[44px] rounded-lg text-xs font-medium transition-all ${
               sort === "latest"
                 ? "bg-white/10 text-white"
                 : "text-white/40 hover:text-white/60"
@@ -122,7 +166,7 @@ export default function CommunityWall() {
           </button>
           <button
             onClick={() => setSort("popular")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`px-4 py-2.5 min-h-[44px] rounded-lg text-xs font-medium transition-all ${
               sort === "popular"
                 ? "bg-white/10 text-white"
                 : "text-white/40 hover:text-white/60"
@@ -172,10 +216,13 @@ export default function CommunityWall() {
                         </p>
                       </div>
 
-                      {/* Like button */}
+                      {/* Like button — 44px tap target */}
                       <button
                         onClick={() => handleLike(comment.id)}
-                        className="flex items-center gap-1 text-xs flex-shrink-0 self-start mt-1"
+                        aria-label={
+                          comment.isLiked ? "Unlike comment" : "Like comment"
+                        }
+                        className="flex items-center justify-center gap-1 text-xs flex-shrink-0 self-start min-w-[44px] min-h-[44px] -my-2 -mr-2 rounded-lg hover:bg-white/5 transition-colors"
                       >
                         <Heart
                           className={`w-4 h-4 transition-colors ${
@@ -206,7 +253,7 @@ export default function CommunityWall() {
         {!showAll && sorted.length > 8 && (
           <motion.button
             onClick={() => setShowAll(true)}
-            className="mt-4 w-full flex items-center justify-center gap-2 py-3 text-sm text-white/50 hover:text-white/70 transition-colors"
+            className="mt-4 w-full flex items-center justify-center gap-2 py-3 min-h-[44px] text-sm text-white/50 hover:text-white/70 transition-colors"
             whileHover={{ y: 2 }}
           >
             <ChevronDown className="w-4 h-4" />

@@ -44,6 +44,9 @@ export default function Leaderboard() {
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
             Today&apos;s Biggest Pulls <span className="inline-block">🏆</span>
           </h2>
+          <p className="text-[11px] uppercase tracking-wider text-white/25">
+            Simulated preview
+          </p>
         </motion.div>
 
         <GlassCard glow="rgba(245, 158, 11, 0.1)" hover={false}>
