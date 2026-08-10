@@ -122,7 +122,3 @@ export const onlineBoxes: OnlineBox[] = [
     emoji: "⚡",
   },
 ];
-
-export function getOnlineBoxByTier(tier: string): OnlineBox | undefined {
-  return onlineBoxes.find((box) => box.id === tier);
-}

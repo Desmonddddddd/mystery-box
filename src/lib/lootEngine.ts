@@ -104,20 +104,6 @@ export function calculateLootValue(items: RewardItem[]): number {
 }
 
 /**
- * Returns the highest-rarity item from a set of rewards.
- */
-export function getBestItem(items: RewardItem[]): RewardItem | null {
-  if (items.length === 0) return null;
-  return items.reduce((best, item) => {
-    const bestIdx = rarityOrder.indexOf(best.rarity);
-    const itemIdx = rarityOrder.indexOf(item.rarity);
-    if (itemIdx > bestIdx) return item;
-    if (itemIdx === bestIdx && item.value > best.value) return item;
-    return best;
-  });
-}
-
-/**
  * Opens a box with loss protection. Boosts rarity weights when the user has
  * consecutive low wins or a high luck meter.
  */

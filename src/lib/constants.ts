@@ -1,5 +1,4 @@
 export const SITE_NAME = "MYSTERYX";
-export const SITE_TAGLINE = "Crack it. Keep it. Flex it.";
 
 export const WHATSAPP_NUMBER = "919876543210";
 export const WHATSAPP_MESSAGE =
@@ -25,6 +24,3 @@ export const NAV_LINKS = [
   { label: "Blog", href: "/blog" },
   { label: "Dashboard", href: "/dashboard" },
 ] as const;
-
-export const SECRET_BOX_COOLDOWN_HOURS = 24;
-export const GEMS_CONVERSION_RATE = 0.6; // 60% of item value when converting to gems

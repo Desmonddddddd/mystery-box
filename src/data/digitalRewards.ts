@@ -274,7 +274,3 @@ export const allDigitalRewards: DigitalReward[] = [
 export function getDigitalRewardsByRarity(rarity: Rarity): DigitalReward[] {
   return allDigitalRewards.filter((r) => r.rarity === rarity);
 }
-
-export function getDigitalRewardById(id: string): DigitalReward | undefined {
-  return allDigitalRewards.find((r) => r.id === id);
-}
