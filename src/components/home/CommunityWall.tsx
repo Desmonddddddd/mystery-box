@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ChevronDown } from "lucide-react";
 import { communityComments } from "@/data/comments";
@@ -15,6 +15,14 @@ export default function CommunityWall() {
   const [sort, setSort] = useState<SortMode>("latest");
   const [showAll, setShowAll] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  // Relative times depend on Date.now(), so the server-rendered strings can
+  // disagree with the client's ("12m ago" vs "29m ago") and trigger a
+  // hydration mismatch. Render them only after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const sorted = useMemo(() => {
     const copy = [...localComments];
@@ -156,7 +164,7 @@ export default function CommunityWall() {
                             {comment.username}
                           </span>
                           <span className="text-xs text-white/30">
-                            {timeAgo(comment.timestamp)}
+                            {mounted ? timeAgo(comment.timestamp) : ""}
                           </span>
                         </div>
                         <p className="text-sm text-white/70 leading-relaxed">
