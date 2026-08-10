@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bot, X, Send, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { findBestMatch } from "@/lib/chatMatcher";
-import { WHATSAPP_LINK } from "@/lib/constants";
+import { SUPPORT_LINK } from "@/lib/constants";
 
 /* ── Types ─────────────────────────────────────────────── */
 interface Message {
@@ -26,7 +26,7 @@ const WELCOME_MESSAGE: Message = {
 };
 
 const SAFE_FALLBACK =
-  "Hmm, something glitched on my end 😅 but I'm still here! Ask me about trunk prices, shipping, gems, or returns — or tap 'Talk to a human' to reach WhatsApp support.";
+  "Hmm, something glitched on my end 😅 but I'm still here! Ask me about trunk prices, shipping, gems, or returns — or tap 'Talk to a human' to email our support team.";
 
 /* ── Session persistence (survives page refresh) ───────── */
 function loadHistory(): Message[] {
@@ -197,7 +197,7 @@ export default function AIChatbot() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-24 right-4 z-[60] w-[360px] sm:w-[380px] h-[520px] max-h-[80vh] flex flex-col rounded-2xl overflow-hidden
+            className="fixed bottom-24 right-4 z-[60] w-[360px] sm:w-[380px] h-[520px] max-h-[calc(100vh-14rem)] flex flex-col rounded-2xl overflow-hidden
               max-sm:left-3 max-sm:right-3 max-sm:bottom-24 max-sm:top-24 max-sm:w-auto max-sm:h-auto"
             style={{
               background: "rgba(10, 10, 15, 0.95)",
@@ -249,11 +249,9 @@ export default function AIChatbot() {
                       {q}
                     </button>
                   ))}
-                  {/* WhatsApp suggestion */}
+                  {/* Support email suggestion */}
                   <a
-                    href={WHATSAPP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={SUPPORT_LINK}
                     className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-green-400 hover:border-green-500/40 hover:bg-green-500/10 transition-all"
                   >
                     Talk to a human 💬
@@ -329,14 +327,12 @@ export default function AIChatbot() {
                 </button>
               </form>
 
-              {/* WhatsApp fallback link */}
+              {/* Support email fallback link */}
               <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={SUPPORT_LINK}
                 className="flex items-center justify-center gap-1.5 mt-2 text-[10px] text-white/25 hover:text-white/50 transition-colors"
               >
-                Need a human? Chat on WhatsApp
+                Need a human? Email support
                 <ExternalLink className="w-2.5 h-2.5" />
               </a>
             </div>

@@ -1,9 +1,9 @@
 export const SITE_NAME = "MYSTERYX";
 
-export const WHATSAPP_NUMBER = "919876543210";
-export const WHATSAPP_MESSAGE =
-  "Hi, I have a question about MYSTERYX mystery boxes!";
-export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+export const SUPPORT_EMAIL = "support@cornorstoneconsulting.com";
+export const SUPPORT_LINK = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
+  "MYSTERYX Support"
+)}`;
 
 export const SPIN_SEGMENTS = [
   { label: "50 Gems", value: 50, color: "#3B82F6" },

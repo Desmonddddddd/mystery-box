@@ -9,7 +9,6 @@ const HERO_IMAGES = [
   "/images/image 12345.avif",
   "/images/cyberpunk-panda-meditation-futuristic-ai-generated-digital-art-illustration-meditating-glowing-neon-armor-suit-surrounded-414892934.webp",
   "/images/hero-lion-neon.jpg",
-  "/images/ai-generated-illustration-cool-monkey-wearing-pair-headphones-sunglasses-ai-generated-illustration-cool-303183445.webp",
 ];
 
 const ROTATE_MS = 4500;

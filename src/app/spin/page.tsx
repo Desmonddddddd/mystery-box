@@ -96,7 +96,6 @@ export default function SpinPage() {
   const addGems = useUserStore((s) => s.addGems);
   const spendGems = useUserStore((s) => s.spendGems);
   const gems = useUserStore((s) => s.profile.gems);
-  const isLoggedIn = useUserStore((s) => s.profile.isLoggedIn);
 
   const hasEnoughGems = gems >= SPIN_COST;
 
@@ -143,7 +142,7 @@ export default function SpinPage() {
       setLionState("celebrating");
       setTimeout(() => setLionState("idle"), 1500);
 
-      if (winner.value > 0 && isLoggedIn) {
+      if (winner.value > 0) {
         addGems(winner.value);
       }
 
@@ -169,7 +168,7 @@ export default function SpinPage() {
         setPhase("idle");
       }, 2000);
     },
-    [recordSpin, incrementStreak, addGems, isLoggedIn]
+    [recordSpin, incrementStreak, addGems]
   );
 
   // ── Spin handler ──
@@ -673,21 +672,9 @@ export default function SpinPage() {
                   You Won!
                 </h3>
                 <p className="text-3xl font-black neon-text mb-4">{result}</p>
-                {isLoggedIn ? (
-                  <p className="text-sm text-gray-400">
-                    Reward has been added to your account.
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-400">
-                    <Link
-                      href="/dashboard"
-                      className="text-neon-purple hover:underline"
-                    >
-                      Log in
-                    </Link>{" "}
-                    to save your rewards!
-                  </p>
-                )}
+                <p className="text-sm text-gray-400">
+                  Reward has been added to your account.
+                </p>
               </div>
             </motion.div>
           )}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE_NAME, WHATSAPP_LINK } from "@/lib/constants";
+import { SITE_NAME, SUPPORT_LINK } from "@/lib/constants";
 
 const columns = [
   {
@@ -46,11 +46,9 @@ export default function Footer() {
               India&apos;s most exciting mystery trunk platform. Every trunk pays
               more than it costs.
             </p>
-            {/* WhatsApp link */}
+            {/* Support email link */}
             <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={SUPPORT_LINK}
               className="mt-4 inline-flex items-center gap-2 text-sm text-pink-400 hover:text-pink-300 transition-colors"
             >
               <span
@@ -59,9 +57,9 @@ export default function Footer() {
                   background: "linear-gradient(135deg, #EC4899, #8B5CF6)",
                 }}
               >
-                W
+                @
               </span>
-              Chat with us
+              Email us
             </a>
           </div>
 

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Clock, User, Share2 } from "lucide-react";
 import Link from "next/link";
 import { blogPosts, getBlogPostBySlug } from "@/data/blogPosts";
-import { WHATSAPP_LINK } from "@/lib/constants";
 
 export default function BlogPostPage({
   params,
@@ -164,7 +163,7 @@ export default function BlogPostPage({
             <div className="flex items-center gap-3 mb-12">
               <span className="text-sm text-white/40">Share:</span>
               <a
-                href={`${WHATSAPP_LINK}&text=${encodeURIComponent(post.title)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`${post.title} — https://mystery-box-nu.vercel.app/blog/${post.slug}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400 text-sm hover:bg-pink-500/20 transition-colors"

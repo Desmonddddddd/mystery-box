@@ -7,7 +7,6 @@ import Link from "next/link";
 import type { RewardItem, BoxTier } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { getBoxByTier } from "@/data/boxes";
-import { WHATSAPP_NUMBER } from "@/lib/constants";
 import Badge from "@/components/ui/Badge";
 import GlowButton from "@/components/ui/GlowButton";
 
@@ -103,7 +102,7 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
       {/* Actions */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
         <a
-          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${shareMessage}`}
+          href={`https://wa.me/?text=${shareMessage}`}
           target="_blank"
           rel="noopener noreferrer"
         >

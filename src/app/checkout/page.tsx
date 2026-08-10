@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -90,9 +90,11 @@ export default function CheckoutPage() {
     }
   }, [isLoggedIn, userName, userPhone]);
 
-  // Redirect if cart is empty
+  // Redirect if cart is empty (but not right after a successful order,
+  // when clearCart() empties it on purpose — dashboard redirect wins then)
+  const orderPlacedRef = useRef(false);
   useEffect(() => {
-    if (mounted && items.length === 0) {
+    if (mounted && items.length === 0 && !orderPlacedRef.current) {
       router.replace("/cart");
     }
   }, [mounted, items, router]);
@@ -195,7 +197,8 @@ export default function CheckoutPage() {
       login(formData.name.trim(), formData.phone.trim());
     }
 
-    // Create orders
+    // Create orders — record what was actually paid (coupon apportioned across items)
+    const paidRatio = subtotal > 0 ? finalTotal / subtotal : 1;
     cartItems.forEach((item) => {
       if (!item.box) return;
       const order: Order = {
@@ -203,7 +206,7 @@ export default function CheckoutPage() {
         boxId: item.boxId,
         boxName: item.box.name,
         quantity: item.quantity,
-        total: item.box.price * item.quantity,
+        total: Math.round(item.box.price * item.quantity * paidRatio),
         status: "confirmed",
         date: new Date().toISOString(),
         engravingName: item.engravingName,
@@ -212,6 +215,7 @@ export default function CheckoutPage() {
     });
 
     // Clear cart and redirect
+    orderPlacedRef.current = true;
     clearCart();
     router.push("/dashboard");
   };

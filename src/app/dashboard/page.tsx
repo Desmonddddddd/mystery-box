@@ -235,7 +235,7 @@ export default function DashboardPage() {
     },
     {
       label: "Gems",
-      value: formatPrice(gems),
+      value: gems.toLocaleString("en-IN"),
       icon: Gift,
       color: "text-neon-green",
       bgColor: "bg-neon-green/10",
