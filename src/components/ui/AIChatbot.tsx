@@ -14,6 +14,47 @@ interface Message {
   text: string;
 }
 
+/* ── Config ────────────────────────────────────────────── */
+const BOT_NAME = "MystiQ";
+const MAX_INPUT_LENGTH = 500;
+const STORAGE_KEY = "mysteryx-chat-history";
+
+const WELCOME_MESSAGE: Message = {
+  id: "welcome",
+  role: "bot",
+  text: `Hey! 👋 I'm ${BOT_NAME}, the MYSTERYX assistant. Ask me anything about mystery trunks, shipping, gems, or how things work!`,
+};
+
+const SAFE_FALLBACK =
+  "Hmm, something glitched on my end 😅 but I'm still here! Ask me about trunk prices, shipping, gems, or returns — or tap 'Talk to a human' to reach WhatsApp support.";
+
+/* ── Session persistence (survives page refresh) ───────── */
+function loadHistory(): Message[] {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (m): m is Message =>
+        m &&
+        typeof m.id === "string" &&
+        (m.role === "user" || m.role === "bot") &&
+        typeof m.text === "string"
+    );
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(messages: Message[]) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50)));
+  } catch {
+    // storage full/unavailable — chat still works, just won't persist
+  }
+}
+
 /* ── Suggested questions ───────────────────────────────── */
 const SUGGESTIONS = [
   "What's inside a trunk?",
@@ -56,6 +97,30 @@ export default function AIChatbot() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Restore chat history after a page refresh (client-only).
+  // Must run in an effect — reading sessionStorage during render would cause
+  // a server/client hydration mismatch on the notification dot.
+  useEffect(() => {
+    const saved = loadHistory();
+    if (saved.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMessages(saved);
+      setHasOpened(true);
+    }
+  }, []);
+
+  // Persist chat history + clean up any pending reply timer
+  useEffect(() => {
+    if (messages.length > 0) saveHistory(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    return () => {
+      if (replyTimerRef.current) clearTimeout(replyTimerRef.current);
+    };
+  }, []);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -74,24 +139,18 @@ export default function AIChatbot() {
     setIsOpen(true);
     if (!hasOpened) {
       setHasOpened(true);
-      setMessages([
-        {
-          id: "welcome",
-          role: "bot",
-          text: "Hey! 👋 I'm the MYSTERYX bot. Ask me anything about mystery trunks, shipping, gems, or how things work!",
-        },
-      ]);
+      setMessages((prev) => (prev.length === 0 ? [WELCOME_MESSAGE] : prev));
     }
   }, [hasOpened]);
 
   // Send message
   const sendMessage = useCallback(
     (text: string) => {
-      const trimmed = text.trim();
+      const trimmed = text.trim().slice(0, MAX_INPUT_LENGTH);
       if (!trimmed || isTyping) return;
 
       const userMsg: Message = {
-        id: `user-${Date.now()}`,
+        id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         role: "user",
         text: trimmed,
       };
@@ -102,12 +161,19 @@ export default function AIChatbot() {
 
       // Simulate typing delay (500-800ms)
       const delay = 500 + Math.random() * 300;
-      setTimeout(() => {
-        const response = findBestMatch(trimmed);
+      replyTimerRef.current = setTimeout(() => {
+        // The bot must ALWAYS reply — if the matcher ever throws,
+        // fall back to a safe canned response instead of silence.
+        let answer: string;
+        try {
+          answer = findBestMatch(trimmed).answer;
+        } catch {
+          answer = SAFE_FALLBACK;
+        }
         const botMsg: Message = {
-          id: `bot-${Date.now()}`,
+          id: `bot-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
           role: "bot",
-          text: response.answer,
+          text: answer,
         };
         setMessages((prev) => [...prev, botMsg]);
         setIsTyping(false);
@@ -147,14 +213,14 @@ export default function AIChatbot() {
               <div className="relative w-9 h-9 rounded-full overflow-hidden border border-purple-500/50 flex-shrink-0">
                 <Image
                   src="/images/lion-mascot.webp"
-                  alt="Bot"
+                  alt={BOT_NAME}
                   fill
                   className="object-cover"
                   sizes="36px"
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white">MYSTERYX Bot</p>
+                <p className="text-sm font-bold text-white">{BOT_NAME}</p>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                   <span className="text-[10px] text-white/40">Always online</span>
@@ -162,6 +228,7 @@ export default function AIChatbot() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
+                aria-label="Close chat"
                 className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-white/50 hover:text-white"
               >
                 <X className="w-5 h-5" />
@@ -204,7 +271,7 @@ export default function AIChatbot() {
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line ${
+                    className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line break-words ${
                       msg.role === "user"
                         ? "rounded-2xl rounded-br-sm text-white"
                         : "rounded-2xl rounded-bl-sm bg-white/5 text-white/80"
@@ -241,15 +308,17 @@ export default function AIChatbot() {
                   ref={inputRef}
                   type="text"
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask me anything..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-purple-500/50 transition-colors"
-                  disabled={isTyping}
+                  onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_LENGTH))}
+                  maxLength={MAX_INPUT_LENGTH}
+                  placeholder={`Ask ${BOT_NAME} anything...`}
+                  aria-label={`Ask ${BOT_NAME} anything`}
+                  className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-purple-500/50 transition-colors"
                 />
                 <button
                   type="submit"
+                  aria-label="Send message"
                   disabled={!input.trim() || isTyping}
-                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: input.trim() && !isTyping
                       ? "linear-gradient(135deg, #EC4899, #8B5CF6)"
@@ -286,7 +355,7 @@ export default function AIChatbot() {
         }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        aria-label={isOpen ? "Close chat" : "Open chat"}
+        aria-label={isOpen ? `Close ${BOT_NAME} chat` : `Open ${BOT_NAME} chat`}
       >
         {/* Pulsing rings (only when closed) */}
         {!isOpen && (

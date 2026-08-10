@@ -66,7 +66,7 @@ export const faqData: FAQEntry[] = [
       "what are the tiers", "different tiers", "trunk options",
     ],
     keywords: [
-      "price", "cost", "much", "tier", "tiers", "trunk", "trunks", "box",
+      "price", "cost", "tier", "tiers", "trunk", "trunks", "box",
       "boxes", "rate", "rates", "cheap", "expensive", "afford", "budget",
       "silver", "gold", "diamond", "elite", "mega", "ultra", "vault",
       "₹", "rupee", "rupees", "inr",
@@ -155,6 +155,8 @@ export const faqData: FAQEntry[] = [
     category: "shipping",
     patterns: [
       "how long does delivery take", "how long does shipping take",
+      "how does shipping work", "how does delivery work",
+      "how shipping works", "how delivery works",
       "when will i get", "when will it arrive", "when will it come",
       "when will my order arrive", "delivery time", "shipping time",
       "how many days", "kitne din", "kab milega", "kab aayega",
@@ -169,7 +171,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "How long does delivery take?",
     answer:
-      "Delivery takes 7-10 days — but it's worth the wait! Every trunk is handpicked and customized just for you. Shipping is FREE on all orders. Once your trunk ships, you'll get a tracking link via email/SMS.\n\nTo track your existing order, check your Dashboard for real-time updates!",
+      "Here's the timeline:\n\n📦 Processing: 2-3 business days — every trunk is handpicked & packed just for you\n🚚 Standard delivery: 5-7 business days, anywhere in India\n⚡ Express options may be available at checkout\n\nShipping cost is included in the trunk price — nothing extra. Once your trunk ships, you'll get a tracking link via email/SMS, and you can track it live from your Dashboard!",
   },
   {
     id: "free-shipping",
@@ -186,7 +188,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "Is shipping free?",
     answer:
-      "Yes! Shipping is 100% free on all trunks. The price you see is the price you pay — no hidden fees, no surprises (except the good kind inside the trunk 😉).",
+      "Shipping is included in the trunk price — the price you see is the price you pay. No hidden fees, no surprises (except the good kind inside the trunk 😉). Express shipping options may be available at checkout if you're in a hurry.",
   },
   {
     id: "location",
@@ -264,6 +266,48 @@ export const faqData: FAQEntry[] = [
     question: "How do I spend gems?",
     answer:
       "You can spend gems on:\n\n🎰 Online Boxes — open instantly for digital rewards (99-7,999 gems)\n🏪 Gem Store — exclusive items, discounts, and power-ups\n🎡 Spin Wheel — 21 gems per spin for prizes\n\nGems convert at a 60% rate (e.g., 100 gems ≈ ₹60 in value). They have no cash value and can't be sold or transferred.",
+  },
+
+  // ─── Virtual Free Try ────────────────────────────────────
+  {
+    id: "virtual-try",
+    category: "about",
+    patterns: [
+      "try before you buy", "try before buying", "free try", "try for free",
+      "try it free", "virtual try", "try a trunk", "try a box",
+      "free trial", "demo", "virtual opening", "open for free",
+      "test open", "practice open", "try without paying",
+      "can i try", "free virtual", "try first",
+    ],
+    keywords: [
+      "try", "free", "virtual", "demo", "trial", "test", "practice",
+      "before",
+    ],
+    question: "Can I try a trunk for free?",
+    answer:
+      "Yes — you can try a trunk for FREE! 🎁\n\nOn the homepage, scroll to the 'Try Before You Buy' section and crack open a virtual Gold, Diamond, or Elite trunk. No signup, no payment, no cap — you'll see exactly the kind of loot real trunks drop.\n\nFair warning: it's addictive. When you're ready for the real thing, head to the Trunks page!",
+  },
+
+  // ─── Gem Store ───────────────────────────────────────────
+  {
+    id: "gem-store",
+    category: "gems",
+    patterns: [
+      "gem store", "buy gems", "gem packages", "gem package", "gem pack",
+      "how do i buy gems", "how to buy gems", "where do i buy gems",
+      "where to buy gems", "can i buy gems",
+      "purchase gems", "top up gems", "topup gems", "gems price",
+      "gem prices", "how much are gems", "get more gems",
+      "need more gems", "recharge gems", "buy more gems",
+      "gems buy", "gem shop",
+    ],
+    keywords: [
+      "store", "shop", "package", "packages", "topup", "recharge",
+      "buy", "gems", "gem",
+    ],
+    question: "How do I buy gems from the Gem Store?",
+    answer:
+      "The Gem Store lets you top up gems instantly:\n\n💎 100 gems — ₹200 (Starter)\n💎 500 gems — ₹600 (Popular)\n💎 1,000 gems — ₹1,000 (Best Value)\n💎 2,000 gems — ₹1,800 (Pro)\n💎 5,000 gems — ₹4,200 (Whale)\n\nSpend them on online boxes, the Spin Wheel (21 gems per spin), and exclusive deals. Find it under 'Store' in the navigation bar!",
   },
 
   // ─── Spin Wheel ──────────────────────────────────────────

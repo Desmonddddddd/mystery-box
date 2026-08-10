@@ -8,7 +8,7 @@ import { faqData, type FAQEntry } from "@/data/faqData";
 
 /* ── Synonym map — maps casual/alternative words to canonical terms ── */
 const SYNONYMS: Record<string, string[]> = {
-  price: ["cost", "much", "rate", "rates", "charge", "charges", "fee", "fees", "kitna", "kitne", "paisa", "paise", "rupee", "rupees", "inr", "₹"],
+  price: ["cost", "rate", "rates", "charge", "charges", "fee", "fees", "kitna", "kitne", "paisa", "paise", "rupee", "rupees", "inr", "₹"],
   shipping: ["delivery", "deliver", "ship", "dispatch", "courier", "parcel", "post"],
   return: ["refund", "exchange", "replace", "replacement", "money back"],
   trunk: ["box", "package", "pack", "mystery box", "mystery trunk", "loot box"],
@@ -91,9 +91,10 @@ const GREETINGS = new Set([
 ]);
 
 const THANKS = new Set([
-  "thanks", "thank you", "thankyou", "thx", "ty", "appreciate",
+  "thanks", "thank", "thank you", "thankyou", "thx", "ty", "appreciate",
   "thanks a lot", "thank u", "thnx", "thnks", "gracias", "shukriya",
-  "dhanyavaad", "dhanyawad",
+  "dhanyavaad", "dhanyawad", "appreciated", "thanks so much",
+  "thank you so much", "thanks man", "thanks bro", "thanks buddy",
 ]);
 
 const BYES = new Set([
@@ -101,21 +102,53 @@ const BYES = new Set([
   "take care", "see ya", "adios", "tata", "ok bye", "okay bye",
 ]);
 
-function checkSpecialIntent(input: string, words: string[]): string | null {
-  // Check full input and individual words
-  if (GREETINGS.has(input) || (words.length <= 3 && words.some((w) => GREETINGS.has(w)))) {
-    return "greeting";
+/* Whole-word/phrase containment — avoids "quality" matching "ty" */
+function containsPhrase(input: string, phrase: string): boolean {
+  const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|\\s)${escaped}($|\\s)`).test(input);
+}
+
+type SpecialIntent = "greeting" | "thanks" | "bye";
+
+const INTENT_SETS: Array<[SpecialIntent, Set<string>]> = [
+  ["greeting", GREETINGS],
+  ["thanks", THANKS],
+  ["bye", BYES],
+];
+
+/**
+ * Strict intent check — only fires when the message is *purely* a
+ * greeting/thanks/bye (so "hey, what are the prices?" still gets the
+ * price answer, but "hey there!" gets a greeting).
+ */
+function checkPureIntent(input: string, words: string[]): SpecialIntent | null {
+  for (const [intent, set] of INTENT_SETS) {
+    if (set.has(input)) return intent;
   }
-  // Check multi-word patterns
-  for (const g of GREETINGS) {
-    if (g.includes(" ") && input.includes(g)) return "greeting";
+  if (words.length > 4) return null;
+  const meaningful = words.filter((w) => !STOP_WORDS.has(w));
+  for (const [intent, set] of INTENT_SETS) {
+    const vocab = new Set<string>();
+    for (const phrase of set) for (const w of phrase.split(" ")) vocab.add(w);
+    if (
+      meaningful.length > 0 &&
+      meaningful.every((w) => vocab.has(w)) &&
+      [...set].some((p) => containsPhrase(input, p))
+    ) {
+      return intent;
+    }
   }
-  for (const t of THANKS) {
-    if (input.includes(t)) return "thanks";
-  }
-  if (words.length <= 4) {
-    for (const b of BYES) {
-      if (input.includes(b)) return "bye";
+  return null;
+}
+
+/**
+ * Loose intent check — used only when no FAQ matched, so a trailing
+ * "thanks" or "bye" still gets a friendly reply instead of the fallback.
+ */
+function checkLooseIntent(input: string): SpecialIntent | null {
+  for (const [intent, set] of INTENT_SETS) {
+    for (const phrase of set) {
+      if (containsPhrase(input, phrase)) return intent;
     }
   }
   return null;
@@ -207,9 +240,9 @@ export interface ChatResponse {
 }
 
 const GREETING_RESPONSES = [
-  "Hey! 👋 I'm the MYSTERYX bot. Ask me anything about mystery trunks, shipping, gems, or how things work!",
-  "Hello! 🎉 What can I help you with today? I know everything about MYSTERYX — trunks, pricing, delivery, gems, you name it!",
-  "Hey there! 🔥 Ready to explore MYSTERYX? Ask me anything — prices, shipping, what's inside, how gems work, whatever you're curious about!",
+  "Hey! 👋 I'm MystiQ, the MYSTERYX assistant. Ask me anything about mystery trunks, shipping, gems, or how things work!",
+  "Hello! 🎉 MystiQ here. What can I help you with today? I know everything about MYSTERYX — trunks, pricing, delivery, gems, you name it!",
+  "Hey there! 🔥 MystiQ at your service. Ask me anything — prices, shipping, what's inside, how gems work, whatever you're curious about!",
 ];
 
 const THANKS_RESPONSES = [
@@ -246,8 +279,8 @@ export function findBestMatch(input: string): ChatResponse {
   const allWords = normalized.split(" ");
   const meaningfulWords = extractWords(normalized);
 
-  // Check special intents first
-  const intent = checkSpecialIntent(normalized, allWords);
+  // Check pure special intents first (message is ONLY a greeting/thanks/bye)
+  const intent = checkPureIntent(normalized, allWords);
   if (intent === "greeting") return { answer: pickRandom(GREETING_RESPONSES), type: "greeting" };
   if (intent === "thanks") return { answer: pickRandom(THANKS_RESPONSES), type: "thanks" };
   if (intent === "bye") return { answer: pickRandom(BYE_RESPONSES), type: "bye" };
@@ -281,6 +314,12 @@ export function findBestMatch(input: string): ChatResponse {
   if (bestEntry && bestScore >= 8 && meaningfulWords.length <= 2) {
     return { answer: bestEntry.answer, type: "faq" };
   }
+
+  // No FAQ match — see if the message loosely contains a social intent
+  const looseIntent = checkLooseIntent(normalized);
+  if (looseIntent === "greeting") return { answer: pickRandom(GREETING_RESPONSES), type: "greeting" };
+  if (looseIntent === "thanks") return { answer: pickRandom(THANKS_RESPONSES), type: "thanks" };
+  if (looseIntent === "bye") return { answer: pickRandom(BYE_RESPONSES), type: "bye" };
 
   return { answer: pickRandom(FALLBACK_RESPONSES), type: "fallback" };
 }
