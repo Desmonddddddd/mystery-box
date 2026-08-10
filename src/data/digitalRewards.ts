@@ -1,43 +1,29 @@
-import type { DigitalReward, Rarity } from "@/types";
+import type { DigitalReward, OnlineBoxTier, Rarity } from "@/types";
+import { onlineBoxes } from "@/data/onlineBoxes";
 
-export const allDigitalRewards: DigitalReward[] = [
-  // ─── COMMON ────────────────────────────────────────────────
-  {
-    id: "gems-10",
-    name: "10 Gems",
-    type: "gems",
-    value: 10,
-    rarity: "common",
-    emoji: "🪙",
-    description: "A small gem top-up.",
-  },
-  {
-    id: "gems-25",
-    name: "25 Gems",
-    type: "gems",
-    value: 25,
-    rarity: "common",
-    emoji: "🪙",
-    description: "Pocket gems!",
-  },
-  {
-    id: "gems-50",
-    name: "50 Gems",
-    type: "gems",
-    value: 50,
-    rarity: "common",
-    emoji: "💰",
-    description: "Not bad! Gems added.",
-  },
-  {
-    id: "discount-5",
-    name: "5% Off Next Box",
-    type: "discount",
-    value: 5,
-    rarity: "common",
-    emoji: "🏷️",
-    description: "5% discount on your next physical box.",
-  },
+// ═══════════════════════════════════════════════════════════
+// Tier-scaled reward pools.
+//
+// Gem payouts are generated as multiples of the tier's stake so a
+// 7,999-gem Mythic open can never "win" a 2,500-gem legendary.
+// Guarantees per tier:
+//   • every legendary-rarity outcome pays MORE than the stake
+//   • the median outcome sits below the stake (normal case-site economics)
+//   • overall RTP lands between ~61% and ~84% (higher tiers pay better)
+// Non-gem catalog items (coupons, merch, free physical boxes) are mixed
+// in only where their real value fits the tier's payout band.
+// ═══════════════════════════════════════════════════════════
+
+export interface WeightedDigitalReward {
+  reward: DigitalReward;
+  weight: number;
+}
+
+// ─── Non-gem catalog (coupons, merch, free boxes) ──────────
+// NOTE: no "cashback" rewards — gems have no cash value, so payouts are
+// gems, coupons, or real shippable items only.
+export const catalogRewards: DigitalReward[] = [
+  // Discount coupons (percent off physical boxes)
   {
     id: "discount-10",
     name: "10% Off Next Box",
@@ -46,62 +32,6 @@ export const allDigitalRewards: DigitalReward[] = [
     rarity: "common",
     emoji: "🏷️",
     description: "10% discount on your next physical box.",
-  },
-  {
-    id: "merch-sticker",
-    name: "MYSTERYX Sticker Pack",
-    type: "merch",
-    value: 99,
-    rarity: "common",
-    emoji: "🏷️",
-    description: "Exclusive holographic sticker pack — ships free!",
-  },
-  {
-    id: "cashback-20",
-    name: "₹20 Cashback",
-    type: "cashback",
-    value: 20,
-    rarity: "common",
-    emoji: "💸",
-    description: "₹20 cashback on next purchase.",
-  },
-  {
-    id: "cashback-50",
-    name: "₹50 Cashback",
-    type: "cashback",
-    value: 50,
-    rarity: "common",
-    emoji: "💸",
-    description: "₹50 cashback on next purchase.",
-  },
-
-  // ─── RARE ──────────────────────────────────────────────────
-  {
-    id: "gems-100",
-    name: "100 Gems",
-    type: "gems",
-    value: 100,
-    rarity: "rare",
-    emoji: "💰",
-    description: "Solid gem win!",
-  },
-  {
-    id: "gems-200",
-    name: "200 Gems",
-    type: "gems",
-    value: 200,
-    rarity: "rare",
-    emoji: "💰",
-    description: "Nice haul of gems!",
-  },
-  {
-    id: "gems-300",
-    name: "300 Gems",
-    type: "gems",
-    value: 300,
-    rarity: "rare",
-    emoji: "🤑",
-    description: "Big gem energy!",
   },
   {
     id: "discount-20",
@@ -122,53 +52,6 @@ export const allDigitalRewards: DigitalReward[] = [
     description: "30% discount on any physical box.",
   },
   {
-    id: "merch-keychain",
-    name: "MYSTERYX Metal Keychain",
-    type: "merch",
-    value: 249,
-    rarity: "rare",
-    emoji: "🔑",
-    description: "Limited edition metal keychain — ships free!",
-  },
-  {
-    id: "cashback-100",
-    name: "₹100 Cashback",
-    type: "cashback",
-    value: 100,
-    rarity: "rare",
-    emoji: "💸",
-    description: "₹100 cashback on next purchase.",
-  },
-  {
-    id: "cashback-200",
-    name: "₹200 Cashback",
-    type: "cashback",
-    value: 200,
-    rarity: "rare",
-    emoji: "💸",
-    description: "₹200 cashback on next purchase!",
-  },
-
-  // ─── EPIC ──────────────────────────────────────────────────
-  {
-    id: "gems-500",
-    name: "500 Gems",
-    type: "gems",
-    value: 500,
-    rarity: "epic",
-    emoji: "🤑",
-    description: "Massive gem drop!",
-  },
-  {
-    id: "gems-1000",
-    name: "1,000 Gems",
-    type: "gems",
-    value: 1000,
-    rarity: "epic",
-    emoji: "🏆",
-    description: "HUGE gem win! You're on fire!",
-  },
-  {
     id: "discount-50",
     name: "50% Off Any Box",
     type: "discount",
@@ -176,6 +59,16 @@ export const allDigitalRewards: DigitalReward[] = [
     rarity: "epic",
     emoji: "⚡",
     description: "Half price on ANY physical mystery box!",
+  },
+  // Merch & free physical boxes (value in ₹, roughly 1 gem ≈ ₹1)
+  {
+    id: "merch-tshirt",
+    name: "MYSTERYX T-Shirt",
+    type: "merch",
+    value: 999,
+    rarity: "epic",
+    emoji: "👕",
+    description: "Exclusive MYSTERYX branded tee — ships free!",
   },
   {
     id: "free-basic",
@@ -196,42 +89,13 @@ export const allDigitalRewards: DigitalReward[] = [
     description: "One free Silver Box — delivered to your door!",
   },
   {
-    id: "cashback-500",
-    name: "₹500 Cashback",
-    type: "cashback",
-    value: 500,
-    rarity: "epic",
-    emoji: "💸",
-    description: "₹500 cashback on next purchase!",
-  },
-  {
-    id: "merch-tshirt",
-    name: "MYSTERYX T-Shirt",
+    id: "merch-hoodie",
+    name: "MYSTERYX Limited Hoodie",
     type: "merch",
-    value: 999,
-    rarity: "epic",
-    emoji: "👕",
-    description: "Exclusive MYSTERYX branded tee — ships free!",
-  },
-
-  // ─── LEGENDARY ─────────────────────────────────────────────
-  {
-    id: "gems-2500",
-    name: "2,500 Gems",
-    type: "gems",
-    value: 2500,
+    value: 2499,
     rarity: "legendary",
-    emoji: "👑",
-    description: "LEGENDARY gem explosion!",
-  },
-  {
-    id: "gems-5000",
-    name: "5,000 Gems",
-    type: "gems",
-    value: 5000,
-    rarity: "legendary",
-    emoji: "👑",
-    description: "JACKPOT! Absolute gem king!",
+    emoji: "🧥",
+    description: "Ultra-limited MYSTERYX hoodie — only from Jackpot wins!",
   },
   {
     id: "free-gold",
@@ -251,26 +115,239 @@ export const allDigitalRewards: DigitalReward[] = [
     emoji: "💎",
     description: "One free Elite Box — the ultimate prize!",
   },
-  {
-    id: "merch-hoodie",
-    name: "MYSTERYX Limited Hoodie",
-    type: "merch",
-    value: 2499,
-    rarity: "legendary",
-    emoji: "🧥",
-    description: "Ultra-limited MYSTERYX hoodie — only from Jackpot wins!",
-  },
-  {
-    id: "cashback-1000",
-    name: "₹1,000 Cashback",
-    type: "cashback",
-    value: 1000,
-    rarity: "legendary",
-    emoji: "🤑",
-    description: "Massive ₹1,000 cashback on your next purchase!",
-  },
 ];
 
+// ─── Gem payout bands (multiples of the tier stake) ────────
+type PayoutBand = { mult: number; weight: number }[];
+type RarityBands = Record<Rarity, PayoutBand>;
+
+// Band groups. Low tiers have rare legendaries, so legendary pays a huge
+// multiple; high tiers hit legendary often, so it pays a modest premium.
+const bandGroups = {
+  // starter, bronze (legendary odds 1–2%)
+  A: {
+    common: [
+      { mult: 0.3, weight: 40 },
+      { mult: 0.5, weight: 40 },
+      { mult: 0.7, weight: 20 },
+    ],
+    rare: [
+      { mult: 0.55, weight: 50 },
+      { mult: 0.75, weight: 35 },
+      { mult: 1.0, weight: 15 },
+    ],
+    epic: [
+      { mult: 1.0, weight: 60 },
+      { mult: 1.5, weight: 30 },
+      { mult: 2.0, weight: 10 },
+    ],
+    legendary: [
+      { mult: 6, weight: 60 },
+      { mult: 12, weight: 30 },
+      { mult: 20, weight: 10 },
+    ],
+  },
+  // silver, gold (legendary odds 3–6%)
+  B: {
+    common: [
+      { mult: 0.25, weight: 40 },
+      { mult: 0.4, weight: 40 },
+      { mult: 0.6, weight: 20 },
+    ],
+    rare: [
+      { mult: 0.5, weight: 50 },
+      { mult: 0.7, weight: 35 },
+      { mult: 0.9, weight: 15 },
+    ],
+    epic: [
+      { mult: 0.9, weight: 55 },
+      { mult: 1.2, weight: 30 },
+      { mult: 1.8, weight: 15 },
+    ],
+    legendary: [
+      { mult: 2.5, weight: 60 },
+      { mult: 4, weight: 30 },
+      { mult: 6, weight: 10 },
+    ],
+  },
+  // platinum, diamond (legendary odds 8–12%)
+  C: {
+    common: [
+      { mult: 0.2, weight: 50 },
+      { mult: 0.3, weight: 35 },
+      { mult: 0.45, weight: 15 },
+    ],
+    rare: [
+      { mult: 0.45, weight: 50 },
+      { mult: 0.6, weight: 35 },
+      { mult: 0.8, weight: 15 },
+    ],
+    epic: [
+      { mult: 0.8, weight: 55 },
+      { mult: 1.1, weight: 30 },
+      { mult: 1.5, weight: 15 },
+    ],
+    legendary: [
+      { mult: 1.5, weight: 60 },
+      { mult: 2.5, weight: 30 },
+      { mult: 4, weight: 10 },
+    ],
+  },
+  // elite, master, legendary (legendary odds 17–33%)
+  D: {
+    common: [
+      { mult: 0.15, weight: 50 },
+      { mult: 0.25, weight: 35 },
+      { mult: 0.4, weight: 15 },
+    ],
+    rare: [
+      { mult: 0.4, weight: 50 },
+      { mult: 0.55, weight: 35 },
+      { mult: 0.7, weight: 15 },
+    ],
+    epic: [
+      { mult: 0.6, weight: 55 },
+      { mult: 0.8, weight: 30 },
+      { mult: 1.1, weight: 15 },
+    ],
+    legendary: [
+      { mult: 1.05, weight: 60 },
+      { mult: 1.4, weight: 30 },
+      { mult: 2.2, weight: 10 },
+    ],
+  },
+  // mythic (legendary odds 45% — payout premium must stay modest)
+  E: {
+    common: [
+      { mult: 0.15, weight: 50 },
+      { mult: 0.25, weight: 35 },
+      { mult: 0.4, weight: 15 },
+    ],
+    rare: [
+      { mult: 0.4, weight: 50 },
+      { mult: 0.55, weight: 35 },
+      { mult: 0.7, weight: 15 },
+    ],
+    epic: [
+      { mult: 0.55, weight: 60 },
+      { mult: 0.75, weight: 30 },
+      { mult: 1.0, weight: 10 },
+    ],
+    legendary: [
+      { mult: 1.02, weight: 65 },
+      { mult: 1.3, weight: 25 },
+      { mult: 1.8, weight: 10 },
+    ],
+  },
+} satisfies Record<string, RarityBands>;
+
+const tierBandGroup: Record<OnlineBoxTier, keyof typeof bandGroups> = {
+  starter: "A",
+  bronze: "A",
+  silver: "B",
+  gold: "B",
+  platinum: "C",
+  diamond: "C",
+  elite: "D",
+  master: "D",
+  legendary: "D",
+  mythic: "E",
+};
+
+// ─── Helpers ───────────────────────────────────────────────
+const tierStake = (tier: OnlineBoxTier): number =>
+  onlineBoxes.find((b) => b.id === tier)?.gemCost ?? 99;
+
+const roundGems = (amount: number): number =>
+  Math.max(5, Math.round(amount / 5) * 5);
+
+const GEM_EMOJI: Record<Rarity, string> = {
+  common: "🪙",
+  rare: "💰",
+  epic: "🤑",
+  legendary: "👑",
+};
+
+const GEM_DESCRIPTION: Record<Rarity, string> = {
+  common: "Gems added straight to your balance.",
+  rare: "Solid gem win — added to your balance!",
+  epic: "Big gem drop — added to your balance!",
+  legendary: "JACKPOT! A gem payout bigger than your stake!",
+};
+
+function makeGemReward(amount: number, rarity: Rarity): DigitalReward {
+  return {
+    id: `gems-${rarity}-${amount}`,
+    name: `${amount.toLocaleString()} Gems`,
+    type: "gems",
+    value: amount,
+    rarity,
+    emoji: GEM_EMOJI[rarity],
+    description: GEM_DESCRIPTION[rarity],
+  };
+}
+
+// Flavor slot: mix a non-gem catalog item into the pool when its real
+// value fits the tier's payout band for that rarity.
+const FLAVOR_WEIGHT = 10;
+
+function flavorRewardsFor(
+  tier: OnlineBoxTier,
+  rarity: Rarity
+): DigitalReward[] {
+  const stake = tierStake(tier);
+
+  if (rarity === "common") {
+    return catalogRewards.filter((r) => r.id === "discount-10");
+  }
+  if (rarity === "rare") {
+    // Bigger coupon for bigger stakes
+    return catalogRewards.filter((r) =>
+      stake >= 999 ? r.id === "discount-30" : r.id === "discount-20"
+    );
+  }
+  if (rarity === "epic") {
+    const fits = catalogRewards.filter(
+      (r) =>
+        r.rarity === "epic" &&
+        r.type !== "discount" &&
+        r.value >= stake * 0.6 &&
+        r.value <= stake * 1.6
+    );
+    return fits.length > 0
+      ? fits
+      : catalogRewards.filter((r) => r.id === "discount-50");
+  }
+  // legendary: only items worth strictly MORE than the stake qualify
+  return catalogRewards.filter(
+    (r) =>
+      r.rarity === "legendary" && r.value > stake && r.value <= stake * 2.5
+  );
+}
+
+// ─── Public API ────────────────────────────────────────────
+export function getTierRewardPool(
+  tier: OnlineBoxTier,
+  rarity: Rarity
+): WeightedDigitalReward[] {
+  const stake = tierStake(tier);
+  const band = bandGroups[tierBandGroup[tier]][rarity];
+
+  const pool: WeightedDigitalReward[] = band.map(({ mult, weight }) => ({
+    reward: makeGemReward(roundGems(stake * mult), rarity),
+    weight,
+  }));
+
+  for (const flavor of flavorRewardsFor(tier, rarity)) {
+    pool.push({ reward: flavor, weight: FLAVOR_WEIGHT });
+  }
+
+  return pool;
+}
+
+// Kept for compatibility: full flat catalog (non-gem items).
+export const allDigitalRewards: DigitalReward[] = catalogRewards;
+
 export function getDigitalRewardsByRarity(rarity: Rarity): DigitalReward[] {
-  return allDigitalRewards.filter((r) => r.rarity === rarity);
+  return catalogRewards.filter((r) => r.rarity === rarity);
 }
