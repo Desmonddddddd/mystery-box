@@ -146,7 +146,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "How many items are in a trunk?",
     answer:
-      "The number of items depends on the tier:\n\n🥈 Silver — 3 to 5 items\n🥇 Gold — 4 to 6 items\n💎 Diamond — 5 to 7 items\n👑 Elite — 6 to 8 items\n🔥 Mega — 7 to 9 items\n⚡ Ultra Vault — 8 to 10 items\n\nHigher tiers = more items AND better rarity odds!",
+      "The number of items depends on the tier:\n\n🥈 Silver — 3 to 5 items\n🥇 Gold — 4 to 6 items\n💎 Diamond — 5 to 7 items\n👑 Elite — 6 to 8 items\n🔥 Mega — 7 to 9 items\n⚡ Ultra Vault — 8 to 12 items\n\nHigher tiers = more items AND better rarity odds!",
   },
 
   // ─── Shipping & Delivery ─────────────────────────────────
@@ -230,7 +230,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "What's the return/refund policy?",
     answer:
-      "All sales are final — that's the nature of mystery boxes! But we've got you covered on quality:\n\n📦 Received a damaged/defective item? Report within 48 hours via WhatsApp with photos\n🔄 We'll replace or resolve it — guaranteed\n📱 WhatsApp: +91 98765 43210\n\nWe take quality seriously. Every trunk is packed with care!",
+      "All sales are final — that's the nature of mystery boxes! The one exception:\n\n📦 Received a physically damaged or defective item? Report it within 48 hours of delivery with photos\n📧 Email: support@cornorstoneconsulting.com\n🔄 We'll ship you a replacement (replacement only — no cash refunds)\n\nWe take quality seriously. Every trunk is packed with care!",
   },
 
   // ─── Gems System ─────────────────────────────────────────
@@ -364,7 +364,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "What are the odds/rarity chances?",
     answer:
-      "We're fully transparent! Each item has a rarity tier:\n\n🟢 Common • 🔵 Rare • 🟣 Epic • 🟡 Legendary\n\nOdds vary by trunk tier — here are the Legendary chances:\n• Silver: 0.5% • Gold: 3% • Diamond: 7%\n• Elite: 13% • Mega: 20% • Ultra: 25%\n\nHigher-priced trunks have MUCH better odds for rare and legendary items. Full breakdown on our blog!",
+      "We're fully transparent! Each item has a rarity tier:\n\n🟢 Common • 🔵 Rare • 🟣 Epic • 🟡 Legendary\n\nOdds vary by trunk tier — here are the Legendary chances:\n• Silver: 2% • Gold: 5% • Diamond: 8%\n• Elite: 12% • Mega: 15% • Ultra Vault: 20%\n\nHigher-priced trunks have MUCH better odds for rare and legendary items. Full breakdown on our blog!",
   },
 
   // ─── Trust & Legitimacy ──────────────────────────────────
@@ -385,7 +385,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "Is MYSTERYX legit? Can I trust you?",
     answer:
-      "100% legit! Here's our word:\n\n🔒 Sealed Tight — trunks are randomized and sealed, untouched until you crack them\n💰 Always Pays More — items inside are ALWAYS worth more than what you paid\n🚀 Real Delivery — physical trunks shipped to your door in 7-10 days\n📱 Real Support — reach us anytime on WhatsApp\n👥 Real Community — check our community wall and winner highlights\n\nThousands of trunks delivered. Real people, real unboxings!",
+      "100% legit! Here's our word:\n\n🔒 Sealed Tight — trunks are randomized and sealed, untouched until you crack them\n💰 Always Pays More — the combined retail value of the items inside always meets or exceeds what you paid\n🚀 Real Delivery — physical trunks shipped to your door in 7-10 days\n📧 Real Support — email us anytime at support@cornorstoneconsulting.com\n👥 Real Community — check our community wall and winner highlights\n\nThousands of trunks delivered. Real people, real unboxings!",
   },
 
   // ─── Payment ─────────────────────────────────────────────
@@ -447,7 +447,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "How do I contact support?",
     answer:
-      "The fastest way to reach us is WhatsApp!\n\n📱 WhatsApp: +91 98765 43210\n⏰ We usually reply within a few hours\n\nFor order issues, have your order details ready and we'll help you out ASAP! You can also use the 'Talk to a human' option right here in this chat.",
+      "Reach us by email — it's our official support channel!\n\n📧 Email: support@cornorstoneconsulting.com\n⏰ We usually reply within a few hours\n\nFor order issues, include your order details and we'll help you out ASAP! You can also use the 'Talk to a human' option right here in this chat.",
   },
 
   // ─── Value Guarantee ─────────────────────────────────────
@@ -465,7 +465,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "Is it worth the money?",
     answer:
-      "Always! Every trunk is guaranteed to contain items worth MORE than what you paid. That's our #1 promise:\n\n🥈 ₹999 Silver → ₹1,499+ worth of items\n🥇 ₹2,499 Gold → ₹3,999+ worth\n💎 ₹4,999 Diamond → ₹7,999+ worth\n👑 ₹7,999 Elite → ₹12,999+ worth\n🔥 ₹9,999 Mega → ₹16,999+ worth\n⚡ ₹24,999 Ultra → ₹39,999+ worth\n\nYou literally can't lose!",
+      "Always! The combined retail value of the items in every trunk is guaranteed to meet or exceed its price. That's our #1 promise:\n\n🥈 ₹999 Silver → ₹1,499+ worth of items\n🥇 ₹2,499 Gold → ₹3,999+ worth\n💎 ₹4,999 Diamond → ₹7,999+ worth\n👑 ₹7,999 Elite → ₹12,999+ worth\n🔥 ₹9,999 Mega → ₹16,999+ worth\n⚡ ₹24,999 Ultra → ₹39,999+ worth\n\nYou literally can't lose!",
   },
 
   // ─── Customization ───────────────────────────────────────
@@ -484,7 +484,7 @@ export const faqData: FAQEntry[] = [
     ],
     question: "Can I customize my trunk?",
     answer:
-      "Not exactly — the mystery is the whole point! However, every trunk is handpicked and curated with care. We mix items across categories to make sure there's something exciting for everyone. The surprise is what makes it special!\n\nIf you have specific preferences, reach out on WhatsApp and we'll do our best.",
+      "Not exactly — the mystery is the whole point! However, every trunk is handpicked and curated with care. We mix items across categories to make sure there's something exciting for everyone. The surprise is what makes it special!\n\nIf you have specific preferences, email us at support@cornorstoneconsulting.com and we'll do our best.",
   },
 
   // ─── Gift ────────────────────────────────────────────────

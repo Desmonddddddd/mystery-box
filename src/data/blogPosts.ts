@@ -7,29 +7,29 @@ export const blogPosts: BlogPost[] = [
     excerpt: "From MacBooks to signed cricket bats — these unboxings broke the internet. See what our luckiest users pulled this month.",
     content: `## The Wildest Wins of the Month
 
-Every month, thousands of mystery boxes are opened on MYSTERYX. But some unboxings are so insane, they deserve their own spotlight.
+Every month, thousands of mystery trunks are opened on MYSTERYX. But some unboxings are so insane, they deserve their own spotlight.
 
-### #1 — Arjun_M pulled a MacBook Air M2 from an Ultra Box
-The crowd went wild. Arjun opened his very first Ultra Box and boom — a MacBook Air M2 worth ₹99,999 appeared. He literally screamed on his WhatsApp status.
+### #1 — Arjun_M pulled a MacBook Air M2 from an Ultra Vault
+The crowd went wild. Arjun opened his very first Ultra Vault and boom — a MacBook Air M2 worth ₹99,999 appeared. The clip of his reaction lived on the community wall for a week.
 
-### #2 — PriyaSharma won 3 Epic items in a single Gold Box
-Three epic-tier items in one box? The odds were astronomically low, but Priya defied them all. Total value: ₹24,997.
+### #2 — PriyaSharma won 3 Epic items in a single Gold Trunk
+Three epic-tier items in one trunk? The odds were astronomically low, but Priya defied them all. Total value: ₹24,997.
 
 ### #3 — AkashDev's Signed Virat Kohli Bat
-A cricket fan's dream come true. This legendary collectible is worth ₹75,000 and Akash got it from an Ultra Box.
+A cricket fan's dream come true. This legendary collectible is worth ₹75,000 and Akash got it from an Ultra Vault.
 
 ### #4 — NehaGupta21 scored Nike Air Max 90s
-Style upgrade! Neha's Elite Box delivered designer sneakers worth ₹8,999.
+Style upgrade! Neha's Elite Trunk delivered designer sneakers worth ₹8,999.
 
 ### #5 — MeghaS pulled an iPhone 16
 The legendary tech drop everyone dreams about. ₹79,999 of pure joy.
 
 ### #6-10
-More incredible wins including JBL speakers, Samsung tablets, gold chains, and VIP concert passes. Every box truly is a new adventure!
+More incredible wins including JBL speakers, Samsung tablets, gold chains, and VIP concert passes. Every trunk truly is a new adventure!
 
 ---
 
-*Want to be on next month's list? [Open a box now](/boxes) and let fate decide!*`,
+*Want to be on next month's list? [Open a trunk now](/boxes) and let fate decide!*`,
     author: "MYSTERYX Team",
     date: "2026-04-20",
     category: "unboxing",
@@ -39,42 +39,68 @@ More incredible wins including JBL speakers, Samsung tablets, gold chains, and V
   {
     slug: "how-our-loot-system-works",
     title: "How Our Loot System Works — Full Transparency",
-    excerpt: "Ever wondered how we decide what goes in your box? Here's the full breakdown of our weighted rarity system.",
-    content: `## Behind the Algorithm
+    excerpt: "Every tier, every price, every drop rate — the exact numbers behind every MYSTERYX trunk, published in full.",
+    content: `## Built to Be Checked
 
-At MYSTERYX, we believe in transparency. Here's exactly how our loot system works.
+At MYSTERYX, we believe transparency is the whole game. Below are the exact numbers our loot system runs on — the same catalog you'll see on the Trunks page and hear from our support chat. If any number here ever disagrees with what you experience, tell us. That's the point of publishing it.
 
-### Rarity Tiers
+### The Four Rarity Tiers
 Every item in our inventory belongs to one of four rarity tiers:
 - **Common** — Everyday cool items (₹99–₹399)
 - **Rare** — Premium picks (₹899–₹2,999)
 - **Epic** — High-value drops (₹3,499–₹12,999)
 - **Legendary** — Life-changing wins (₹15,000–₹99,999)
 
-### How Odds Work
-Each box tier has different rarity weights:
+### The Six Trunks
+We sell six physical trunk tiers. Every trunk contains multiple items — the count is rolled within a fixed range for its tier:
 
-| Box | Common | Rare | Epic | Legendary |
-|-----|--------|------|------|-----------|
-| Basic (₹999) | 70% | 25% | 4.5% | 0.5% |
-| Silver (₹2,999) | 55% | 30% | 12% | 3% |
-| Gold (₹4,999) | 40% | 35% | 18% | 7% |
-| Elite (₹9,999) | 25% | 35% | 25% | 15% |
-| Ultra (₹24,999) | 15% | 30% | 30% | 25% |
+| Trunk | Price | Items Inside |
+|-------|-------|--------------|
+| Silver | ₹999 | 3–5 |
+| Gold | ₹2,499 | 4–6 |
+| Diamond | ₹4,999 | 5–7 |
+| Elite | ₹7,999 | 6–8 |
+| Mega | ₹9,999 | 7–9 |
+| Ultra Vault | ₹24,999 | 8–12 |
 
-### Loss Protection
-We've added a Luck Meter system! After consecutive low-value wins, your rarity weights get boosted automatically. No one stays unlucky forever on MYSTERYX.
+### Drop Odds by Tier
+Each item in your trunk is rolled independently against these weights:
 
-### Every Box is a Win
-Even our Basic Box guarantees items worth more than the ₹999 you pay. That's the MYSTERYX promise.
+| Trunk | Common | Rare | Epic | Legendary |
+|-------|--------|------|------|-----------|
+| Silver (₹999) | 70% | 20% | 8% | 2% |
+| Gold (₹2,499) | 55% | 28% | 12% | 5% |
+| Diamond (₹4,999) | 45% | 30% | 17% | 8% |
+| Elite (₹7,999) | 35% | 32% | 21% | 12% |
+| Mega (₹9,999) | 28% | 32% | 25% | 15% |
+| Ultra Vault (₹24,999) | 20% | 30% | 30% | 20% |
+
+Higher tiers don't just carry more items — every single roll inside them is heavier. An Ultra Vault gives you 8–12 rolls at 20% legendary each, which is why the biggest wins almost always come out of the top tiers.
+
+### How a 70%-Common Trunk Still Beats Its Price
+Here's the part most mystery box platforms won't spell out. Yes, a Silver Trunk item is 70% likely to be common. So how can we promise value?
+
+Because you never get *one* item — you get 3 to 5. Multiple items per trunk is exactly why the math works: even a draw of all commons stacks up, and with 3–5 independent rolls, a 2% legendary chance per roll means roughly 1 in 10 Silver Trunks lands a legendary somewhere inside. Our curation team then packs each trunk so that **the combined retail value of the items in every trunk meets or exceeds its price**. That's the MYSTERYX value guarantee, exactly as written in our Terms.
+
+One honest caveat, because transparency cuts both ways: the guarantee applies to the trunk as a whole, not to any individual item. No specific item is ever promised, and single items inside a trunk can be worth less than the trunk price on their own. The floor is the combined value — that one never breaks.
+
+### Loss Protection — The Luck Meter
+Randomness can be streaky, so we built a counterweight. After 3+ consecutive low-value wins, your rarity weights automatically shift away from common toward rare, epic, and legendary. Fill your Luck Meter and the boost gets stronger still. No one stays unlucky forever on MYSTERYX.
+
+### What We Guarantee — and What We Don't
+- ✅ Combined retail value of every trunk ≥ its price
+- ✅ Published odds, applied identically to every open
+- ✅ Loss protection that only ever boosts you, never hurts you
+- ❌ Specific items on request
+- ❌ A minimum value for any single item
 
 ---
 
-*Try it yourself — [open a virtual box for free](/virtual) or [buy the real thing](/boxes)!*`,
+*See the numbers in action — [try a free virtual open](/virtual) or [pick your trunk](/boxes).*`,
     author: "MYSTERYX Team",
     date: "2026-04-15",
     category: "tips",
-    readTime: 3,
+    readTime: 5,
     emoji: "🎰",
   },
   {
@@ -83,7 +109,7 @@ Even our Basic Box guarantees items worth more than the ₹999 you pay. That's t
     excerpt: "Our community is wild, passionate, and growing every day. Here's what makes the MYSTERYX fam special.",
     content: `## More Than Just Boxes
 
-MYSTERYX isn't just about opening boxes — it's about the community that's built around the thrill.
+MYSTERYX isn't just about opening trunks — it's about the community that's built around the thrill.
 
 ### The Numbers
 - **10,000+** active users
@@ -100,7 +126,7 @@ Our community wall is one of the most active features on the platform. Users sha
 3. Daily spin wheel competitions where users compare their streaks
 
 ### Join the Conversation
-Drop a comment on our community wall, share your unboxing on WhatsApp, or just vibe with fellow mystery box enthusiasts.
+Drop a comment on our community wall, post your unboxing for the fam to see, or just vibe with fellow mystery trunk enthusiasts.
 
 ---
 
@@ -114,29 +140,29 @@ Drop a comment on our community wall, share your unboxing on WhatsApp, or just v
   {
     slug: "maximize-mystery-box-value",
     title: "5 Tips to Maximize Your Mystery Box Value",
-    excerpt: "Pro strategies to get the most out of every mystery box purchase. From timing to tier selection — here's how the pros do it.",
+    excerpt: "Pro strategies to get the most out of every mystery trunk purchase. From timing to tier selection — here's how the pros do it.",
     content: `## How to Win Bigger
 
-We've analyzed thousands of box openings and found patterns that can help you maximize value.
+We've analyzed thousands of trunk openings and found patterns that can help you maximize value.
 
 ### Tip #1 — Use the Luck Meter
-Your Luck Meter builds up after consecutive low wins. When it's high, your next box has boosted rarity odds. Time your premium box purchases for when your meter is near the top!
+Your Luck Meter builds up after consecutive low wins. When it's high, your next trunk has boosted rarity odds. Time your premium trunk purchases for when your meter is near the top!
 
-### Tip #2 — Gold Box is the Sweet Spot
-Statistically, Gold Boxes offer the best value-to-price ratio. With 18% epic and 7% legendary odds, you're always in the game.
+### Tip #2 — Diamond Trunk is the Sweet Spot
+Statistically, the Diamond Trunk (₹4,999) offers a great value-to-price ratio. With 17% epic and 8% legendary odds across 5–7 items, you're always in the game without going all-in.
 
 ### Tip #3 — Stack Your Spins
-Don't forget your daily spin! Free gems add up fast. A week of spins can earn you enough for a Mini online box play.
+Don't forget your daily spin! Free gems add up fast. A good week of spins can earn you enough for a Starter Box (99 gems) in the online game.
 
 ### Tip #4 — Play the Online Game
-The online mystery box game costs only gems — no real money. Use it to build up free box vouchers and cashback rewards.
+The online mystery box game runs entirely on gems — no real money needed. Every open drops one instant digital reward: gem bonuses, discount codes, merch, even free physical trunk vouchers.
 
 ### Tip #5 — Daily Login Rewards
-7 consecutive daily logins = 500 gems + a free Basic Box. That's literally free loot for just showing up!
+Keep your login streak alive — day 7 pays out 500 gems plus a free Silver Trunk. That's literally free loot for just showing up!
 
 ---
 
-*Ready to apply these tips? [Head to the boxes](/boxes)!*`,
+*Ready to apply these tips? [Head to the trunks](/boxes)!*`,
     author: "MYSTERYX Team",
     date: "2026-04-05",
     category: "tips",
@@ -155,20 +181,20 @@ MYSTERYX started with a simple question: "What if opening a package could be the
 We noticed that people love surprises. Gift-giving, loot boxes in games, lucky draws — the thrill of not knowing what you'll get is universally exciting.
 
 ### The Challenge
-Building a fair, transparent, and thrilling mystery box platform meant solving several problems:
-- How to make every box feel worth it
+Building a fair, transparent, and thrilling mystery trunk platform meant solving several problems:
+- How to make every trunk feel worth it
 - How to include truly premium items without making the price astronomical
 - How to create an addictive experience that keeps people coming back
 
 ### The Solution
-We built a weighted rarity system, added gamification (spins, streaks, luck meters), and created a community around the experience. Every box contains items worth more than you pay — guaranteed.
+We built a weighted rarity system, added gamification (spins, streaks, luck meters), and created a community around the experience. And we backed it with a real promise: the combined retail value of the items in every trunk meets or exceeds its price — guaranteed.
 
 ### What's Next
-We're constantly adding new items, new box tiers, and new features. The online game, daily rewards, and loss protection system are just the beginning.
+We're constantly adding new items, new trunk tiers, and new features. The online game, daily rewards, and loss protection system are just the beginning.
 
 ---
 
-*Be part of the journey — [open your first box today](/boxes)!*`,
+*Be part of the journey — [open your first trunk today](/boxes)!*`,
     author: "MYSTERYX Team",
     date: "2026-03-28",
     category: "news",
@@ -184,26 +210,29 @@ We're constantly adding new items, new box tiers, and new features. The online g
 We heard you: "I want to play more, but I don't want to spend money every time." So we built the Online Game.
 
 ### How It Works
-1. **Earn Gems** — Daily spins, login streaks, referrals, or converting won items
-2. **Pick a Digital Box** — Mini (50), Standard (150), Mega (500), or Jackpot (1000 gems)
-3. **Open & Win** — Instant digital rewards: gems, discounts, free physical boxes, merch, and cashback
+1. **Earn Gems** — Welcome bonus, daily login streaks, spin wheel wins, and referrals
+2. **Pick a Gem Box** — Ten tiers, from Starter at 99 gems all the way to Mythic at 7,999
+3. **Open & Win** — Every open drops **one instant digital reward**: gem bonuses, discount codes, MYSTERYX merch, or free physical trunk vouchers
 
-### The Tiers
+### The Ten Gem Boxes
 
-**Mini Box (50 Gems)**
-Quick fun with small prizes. Great for warming up!
+| Box | Gem Cost |
+|-----|----------|
+| 🎲 Starter | 99 |
+| 🥉 Bronze | 199 |
+| 🥈 Silver | 499 |
+| 🥇 Gold | 799 |
+| 💎 Platinum | 999 |
+| ✨ Diamond | 1,499 |
+| 🏆 Elite | 1,999 |
+| 🔥 Master | 2,999 |
+| 👑 Legendary | 4,999 |
+| ⚡ Mythic | 7,999 |
 
-**Standard Box (150 Gems)**
-Solid rewards — decent gem wins and discount codes.
-
-**Mega Box (500 Gems)**
-High-value territory. Free box vouchers and massive gem drops.
-
-**Jackpot Box (1000 Gems)**
-The ultimate gamble. Legendary rewards include free Elite boxes and 5,000 gem explosions!
+Higher tiers carry dramatically better odds — legendary drop chances climb from just 1% on a Starter Box to a massive 45% on a Mythic Box. The top tiers are where the free-trunk vouchers and giant gem jackpots live.
 
 ### No Real Money Needed
-The online game runs entirely on gems. Earn them through gameplay or buy physical boxes to get started.
+The online game runs entirely on gems. Earn them free through the welcome bonus, daily streaks, spins, and referrals — or top up in the Gem Store. One thing to know: gems are an in-app currency with no cash value, and rewards are digital-only until you cash a free-trunk voucher into a real delivery.
 
 ---
 
