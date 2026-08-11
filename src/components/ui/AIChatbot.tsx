@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bot, X, Send, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { findBestMatch } from "@/lib/chatMatcher";
-import { SUPPORT_LINK } from "@/lib/constants";
+import { useContactModalStore } from "@/stores/contactModalStore";
 
 /* ── Types ─────────────────────────────────────────────── */
 interface Message {
@@ -249,13 +249,13 @@ export default function AIChatbot() {
                       {q}
                     </button>
                   ))}
-                  {/* Support email suggestion */}
-                  <a
-                    href={SUPPORT_LINK}
+                  {/* Support enquiry form trigger */}
+                  <button
+                    onClick={() => useContactModalStore.getState().open()}
                     className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-green-400 hover:border-green-500/40 hover:bg-green-500/10 transition-all"
                   >
                     Talk to a human 💬
-                  </a>
+                  </button>
                 </div>
               )}
 
@@ -327,14 +327,14 @@ export default function AIChatbot() {
                 </button>
               </form>
 
-              {/* Support email fallback link */}
-              <a
-                href={SUPPORT_LINK}
-                className="flex items-center justify-center gap-1.5 mt-2 text-[10px] text-white/25 hover:text-white/50 transition-colors"
+              {/* Support enquiry form fallback */}
+              <button
+                onClick={() => useContactModalStore.getState().open()}
+                className="w-full flex items-center justify-center gap-1.5 mt-2 text-[10px] text-white/25 hover:text-white/50 transition-colors"
               >
                 Need a human? Email support
                 <ExternalLink className="w-2.5 h-2.5" />
-              </a>
+              </button>
             </div>
           </motion.div>
         )}

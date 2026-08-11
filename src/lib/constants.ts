@@ -4,6 +4,10 @@ export const SUPPORT_EMAIL = "support@cornorstoneconsulting.com";
 export const SUPPORT_LINK = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
   "MYSTERYX Support"
 )}`;
+// FormSubmit relay — delivers enquiries to SUPPORT_EMAIL with no backend.
+// The first-ever submission emails an activation link to that inbox; it must
+// be confirmed once before deliveries flow.
+export const CONTACT_FORM_ENDPOINT = `https://formsubmit.co/ajax/${SUPPORT_EMAIL}`;
 
 // Weighted spin wheel. `weight` is the selection weight (out of the total),
 // NOT the visual slice size — the wheel draws equal slices, the pick is weighted.

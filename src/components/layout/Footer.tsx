@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SITE_NAME, SUPPORT_LINK } from "@/lib/constants";
+import { SITE_NAME } from "@/lib/constants";
+import EmailUsLink from "@/components/support/EmailUsLink";
 
 const columns = [
   {
@@ -46,21 +47,8 @@ export default function Footer() {
               India&apos;s most exciting mystery trunk platform. Every trunk pays
               more than it costs.
             </p>
-            {/* Support email link */}
-            <a
-              href={SUPPORT_LINK}
-              className="mt-4 inline-flex items-center gap-2 text-sm text-pink-400 hover:text-pink-300 transition-colors"
-            >
-              <span
-                className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                style={{
-                  background: "linear-gradient(135deg, #EC4899, #8B5CF6)",
-                }}
-              >
-                @
-              </span>
-              Email us
-            </a>
+            {/* Support contact — opens the enquiry form modal */}
+            <EmailUsLink />
           </div>
 
           {/* Link columns */}

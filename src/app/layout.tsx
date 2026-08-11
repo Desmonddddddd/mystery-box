@@ -6,6 +6,7 @@ import AIChatbot from "@/components/ui/AIChatbot";
 import WelcomeBonus from "@/components/gamification/WelcomeBonus";
 import SecretBox from "@/components/gamification/SecretBox";
 import MusicPlayer from "@/components/ui/MusicPlayer";
+import ContactModal from "@/components/support/ContactModal";
 import "./globals.css";
 
 const inter = Inter({
@@ -67,6 +68,7 @@ export default function RootLayout({
         <WelcomeBonus />
         <SecretBox />
         <MusicPlayer />
+        <ContactModal />
       </body>
     </html>
   );
