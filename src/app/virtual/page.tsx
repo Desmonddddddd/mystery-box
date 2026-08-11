@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { onlineBoxes } from "@/data/onlineBoxes";
-import { openOnlineBox } from "@/lib/onlineLootEngine";
+import { openOnlineBox, onlineRarityWeights } from "@/lib/onlineLootEngine";
 import { cn } from "@/lib/utils";
 import type { OnlineBoxTier, DigitalReward } from "@/types";
 import GlowButton from "@/components/ui/GlowButton";
@@ -118,7 +118,8 @@ export default function VirtualPage() {
               </span>
             </h1>
             <p className="text-lg text-white/50 max-w-2xl mx-auto mb-6">
-              Spend gems, win instant digital rewards — no shipping needed!
+              Spend gems, open a box, win one instant digital reward — gems,
+              coupons, merch, or a free physical box. No shipping needed!
             </p>
 
             {/* Win Big Banner — centered */}
@@ -250,7 +251,8 @@ export default function VirtualPage() {
                       </span>
                     </div>
                     <p className="text-[10px] text-white/30 mb-3">
-                      {box.itemRange[0]}–{box.itemRange[1]} items
+                      1 reward per open ·{" "}
+                      {onlineRarityWeights[box.id].legendary}% legendary
                     </p>
 
                     <button
@@ -271,6 +273,84 @@ export default function VirtualPage() {
               );
             })}
           </div>
+
+          {/* ── Drop Odds (real engine weights) ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-12 max-w-3xl mx-auto"
+          >
+            <details className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden">
+              <summary className="flex items-center justify-between cursor-pointer list-none px-5 py-4 text-sm font-semibold text-white/70 hover:text-white transition-colors [&::-webkit-details-marker]:hidden">
+                <span className="flex items-center gap-2">
+                  <span aria-hidden>🎲</span> Drop odds by tier
+                </span>
+                <span className="text-white/30 text-xs group-open:hidden">
+                  Show
+                </span>
+                <span className="text-white/30 text-xs hidden group-open:inline">
+                  Hide
+                </span>
+              </summary>
+              <div className="px-5 pb-5">
+                <p className="text-xs text-white/40 mb-4">
+                  Every open pays exactly one reward. These are the live
+                  probabilities used by the game engine. Legendary rewards
+                  always pay more than the box costs; most opens pay less —
+                  that&apos;s the gamble.
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead>
+                      <tr className="text-white/40 border-b border-white/10">
+                        <th className="py-2 pr-3 font-medium">Box</th>
+                        <th className="py-2 px-3 font-medium text-right">
+                          Cost
+                        </th>
+                        <th className="py-2 px-3 font-medium text-right text-gray-300">
+                          Common
+                        </th>
+                        <th className="py-2 px-3 font-medium text-right text-blue-300">
+                          Rare
+                        </th>
+                        <th className="py-2 px-3 font-medium text-right text-purple-300">
+                          Epic
+                        </th>
+                        <th className="py-2 pl-3 font-medium text-right text-amber-300">
+                          Legendary
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {onlineBoxes.map((box) => {
+                        const w = onlineRarityWeights[box.id];
+                        return (
+                          <tr
+                            key={box.id}
+                            className="border-b border-white/5 text-white/60"
+                          >
+                            <td className="py-2 pr-3 font-medium text-white/80 whitespace-nowrap">
+                              {box.emoji} {box.name}
+                            </td>
+                            <td className="py-2 px-3 text-right text-purple-300">
+                              {box.gemCost.toLocaleString()}
+                            </td>
+                            <td className="py-2 px-3 text-right">{w.common}%</td>
+                            <td className="py-2 px-3 text-right">{w.rare}%</td>
+                            <td className="py-2 px-3 text-right">{w.epic}%</td>
+                            <td className="py-2 pl-3 text-right font-semibold text-amber-300">
+                              {w.legendary}%
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+          </motion.div>
 
           {/* Not enough gems */}
           {gems < 50 && (
