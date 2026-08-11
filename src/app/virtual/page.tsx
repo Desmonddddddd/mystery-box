@@ -20,6 +20,7 @@ import GlowButton from "@/components/ui/GlowButton";
 import OnlineBoxOpening from "@/components/online/OnlineBoxOpening";
 import { useUserStore } from "@/stores/userStore";
 import { useOnlineGameStore } from "@/stores/onlineGameStore";
+import { useGamificationStore } from "@/stores/gamificationStore";
 
 export default function VirtualPage() {
   const [selectedOnlineTier, setSelectedOnlineTier] =
@@ -33,15 +34,13 @@ export default function VirtualPage() {
   const totalPlays = useOnlineGameStore((s) => s.totalPlays);
   const biggestWin = useOnlineGameStore((s) => s.biggestWin);
   const recordPlay = useOnlineGameStore((s) => s.recordPlay);
+  const lastFreeBoxDate = useGamificationStore((s) => s.lastFreeBoxDate);
+  const recordFreeBoxOpen = useGamificationStore((s) => s.recordFreeBoxOpen);
 
-  const handlePlay = (tier: OnlineBoxTier) => {
-    const box = onlineBoxes.find((b) => b.id === tier);
-    if (!box) return;
-    if (gems < box.gemCost) return;
+  const freeBoxAvailable =
+    lastFreeBoxDate !== new Date().toISOString().split("T")[0];
 
-    const success = spendGems(box.gemCost);
-    if (!success) return;
-
+  const revealBox = (tier: OnlineBoxTier) => {
     setSelectedOnlineTier(tier);
     setIsRevealing(true);
     setOnlineResult(null);
@@ -56,6 +55,23 @@ export default function VirtualPage() {
         addGems(reward.value);
       }
     }, 2500);
+  };
+
+  const handleFreeOpen = () => {
+    if (!freeBoxAvailable || isRevealing) return;
+    recordFreeBoxOpen();
+    revealBox("starter");
+  };
+
+  const handlePlay = (tier: OnlineBoxTier) => {
+    const box = onlineBoxes.find((b) => b.id === tier);
+    if (!box) return;
+    if (gems < box.gemCost) return;
+
+    const success = spendGems(box.gemCost);
+    if (!success) return;
+
+    revealBox(tier);
   };
 
   const handleClose = () => {
@@ -207,6 +223,60 @@ export default function VirtualPage() {
       {/* Box Grid */}
       <section className="relative pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* ── Daily Free Box ── */}
+          <motion.div
+            id="daily-free-box"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="max-w-3xl mx-auto mb-10 scroll-mt-24"
+          >
+            <div
+              className={cn(
+                "relative overflow-hidden rounded-2xl border p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 backdrop-blur-xl",
+                freeBoxAvailable
+                  ? "border-pink-500/30 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-blue-500/10"
+                  : "border-white/10 bg-white/5"
+              )}
+            >
+              <motion.span
+                animate={
+                  freeBoxAvailable
+                    ? { rotate: [0, -8, 8, 0], scale: [1, 1.1, 1] }
+                    : {}
+                }
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="text-4xl"
+                aria-hidden
+              >
+                🎁
+              </motion.span>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-base font-bold text-white mb-1">
+                  Daily Free Box
+                </h3>
+                <p className="text-xs text-white/50">
+                  {freeBoxAvailable
+                    ? "One free Starter Box open every day — zero gems, same real odds."
+                    : "Claimed today ✓ — your next free box unlocks at midnight."}
+                </p>
+              </div>
+              <button
+                onClick={handleFreeOpen}
+                disabled={!freeBoxAvailable || isRevealing}
+                className={cn(
+                  "px-6 py-2.5 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap",
+                  freeBoxAvailable
+                    ? "bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] active:scale-95"
+                    : "bg-white/5 text-white/30 cursor-not-allowed"
+                )}
+              >
+                <Gift className="w-4 h-4" />
+                {freeBoxAvailable ? "Open Free Box" : "Come Back Tomorrow"}
+              </button>
+            </div>
+          </motion.div>
+
           <h2 className="text-lg font-semibold text-white/60 mb-6 text-center">
             Choose a mystery box
           </h2>

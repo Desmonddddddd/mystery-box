@@ -9,6 +9,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useUserStore } from "@/stores/userStore";
 import { NAV_LINKS } from "@/lib/constants";
 import LoginModal from "@/components/ui/LoginModal";
+import DailyBoxCountdown from "@/components/layout/DailyBoxCountdown";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -63,6 +64,9 @@ export default function Navbar() {
 
             {/* Right side */}
             <div className="flex items-center gap-1.5 sm:gap-4">
+              {/* Daily Free Box — available glow or countdown */}
+              <DailyBoxCountdown className="hidden sm:block" />
+
               {/* Cart */}
               <Link
                 href="/cart"
@@ -156,6 +160,10 @@ export default function Navbar() {
               className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/5 overflow-hidden"
             >
               <div className="px-4 py-4 space-y-3">
+                <DailyBoxCountdown
+                  onNavigate={() => setMobileOpen(false)}
+                  className="block w-fit"
+                />
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}

@@ -15,6 +15,9 @@ interface GamificationStore {
   claimedDailyDays: number[];
   hasFoundSecretBox: boolean;
   secretBoxCooldown: string | null;
+  lastFreeBoxDate: string | null;
+  canOpenFreeBoxToday: () => boolean;
+  recordFreeBoxOpen: () => void;
   canSpinToday: () => boolean;
   recordSpin: (result?: string) => void;
   claimWelcomeBonus: () => void;
@@ -57,6 +60,17 @@ export const useGamificationStore = create<GamificationStore>()(
       claimedDailyDays: [],
       hasFoundSecretBox: false,
       secretBoxCooldown: null,
+      lastFreeBoxDate: null,
+
+      canOpenFreeBoxToday: () => {
+        const { lastFreeBoxDate } = get();
+        if (!lastFreeBoxDate) return true;
+        return lastFreeBoxDate !== getTodayDateString();
+      },
+
+      recordFreeBoxOpen: () => {
+        set({ lastFreeBoxDate: getTodayDateString() });
+      },
 
       canSpinToday: () => {
         const { lastSpinDate } = get();
