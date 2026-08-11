@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { BoxTier, RewardItem } from "@/types";
 import { useOpeningStore } from "@/stores/openingStore";
@@ -12,7 +12,8 @@ import Confetti from "./Confetti";
 interface BoxAnimationProps {
   boxTier: BoxTier;
   items: RewardItem[];
-  onComplete: () => void;
+  /** Called with the items the user kept (sold-back items excluded). */
+  onComplete: (keptItems: RewardItem[]) => void;
 }
 
 export default function BoxAnimation({
@@ -29,6 +30,7 @@ export default function BoxAnimation({
 
   const box = getBoxByTier(boxTier);
   const hasLegendary = items.some((item) => item.rarity === "legendary");
+  const soldIndicesRef = useRef<number[]>([]);
 
   // Start opening on mount
   useEffect(() => {
@@ -69,9 +71,12 @@ export default function BoxAnimation({
   }, [currentRevealIndex, items.length, revealNextItem]);
 
   const handleComplete = useCallback(() => {
+    const kept = items.filter(
+      (_, index) => !soldIndicesRef.current.includes(index)
+    );
     reset();
-    onComplete();
-  }, [reset, onComplete]);
+    onComplete(kept);
+  }, [reset, onComplete, items]);
 
   return (
     <div className="fixed inset-0 z-[200] bg-[#0a0a0f]/95 backdrop-blur-xl flex items-center justify-center">
@@ -211,6 +216,9 @@ export default function BoxAnimation({
             <RevealSummary
               items={items}
               boxTier={boxTier}
+              onSoldChange={(sold) => {
+                soldIndicesRef.current = sold;
+              }}
             />
             <div className="text-center mt-6">
               <button

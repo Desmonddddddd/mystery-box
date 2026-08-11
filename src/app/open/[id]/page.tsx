@@ -50,10 +50,11 @@ export default function OpenBoxPage() {
     setHasStarted(true);
   }, [box, tier, consecutiveLowWins, luckMeter]);
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback((keptItems: RewardItem[]) => {
     setIsComplete(true);
     incrementBoxesOpened();
-    addWonItems(lootItems);
+    // Only items the user kept (didn't sell back for gems) join the haul.
+    addWonItems(keptItems);
 
     // Update luck meter based on result quality
     const totalValue = calculateLootValue(lootItems);
