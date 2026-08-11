@@ -258,9 +258,9 @@ const BYE_RESPONSES = [
 ];
 
 const FALLBACK_RESPONSES = [
-  "Hmm, I'm not sure about that one 🤔\n\nI can help with:\n• Trunk prices & tiers\n• Shipping & delivery\n• Gems & rewards\n• Returns & refunds\n• How MYSTERYX works\n\nOr chat with a real human on WhatsApp!",
-  "I don't have a specific answer for that! Try asking about:\n\n• \"What are the trunk prices?\"\n• \"How does shipping work?\"\n• \"How do gems work?\"\n• \"What's inside a trunk?\"\n\nFor anything else, our WhatsApp team can help!",
-  "That's outside my wheelhouse 😅 But I can answer questions about trunks, pricing, delivery, gems, rarity odds, returns, and more!\n\nOr tap 'Talk to a human' to reach our WhatsApp support.",
+  "Hmm, I'm not sure about that one 🤔\n\nI can help with:\n• Trunk prices & tiers\n• Shipping & delivery\n• Gems & rewards\n• Returns & refunds\n• How MYSTERYX works\n\nOr email us at support@cornorstoneconsulting.com!",
+  "I don't have a specific answer for that! Try asking about:\n\n• \"What are the trunk prices?\"\n• \"How does shipping work?\"\n• \"How do gems work?\"\n• \"What's inside a trunk?\"\n\nFor anything else, our email support team can help — support@cornorstoneconsulting.com!",
+  "That's outside my wheelhouse 😅 But I can answer questions about trunks, pricing, delivery, gems, rarity odds, returns, and more!\n\nOr tap 'Talk to a human' to reach our email support.",
 ];
 
 function pickRandom(arr: string[]): string {

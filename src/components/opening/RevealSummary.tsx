@@ -42,10 +42,6 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
     return () => clearInterval(timer);
   }, [totalValue]);
 
-  const shareMessage = encodeURIComponent(
-    `I just opened a ${box?.name ?? "Mystery Trunk"} on MYSTERYX and won items worth ${formatPrice(totalValue)}! 🔥 Check it out: https://mysteryx.in`
-  );
-
   return (
     <div className="max-w-2xl mx-auto px-4">
       {/* Celebration text */}
@@ -101,15 +97,6 @@ export default function RevealSummary({ items, boxTier }: RevealSummaryProps) {
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a
-          href={`https://wa.me/?text=${shareMessage}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <GlowButton variant="secondary" size="md">
-            Share on WhatsApp
-          </GlowButton>
-        </a>
         <GlowButton href="/boxes" variant="primary" size="md">
           Open Another Box
         </GlowButton>
