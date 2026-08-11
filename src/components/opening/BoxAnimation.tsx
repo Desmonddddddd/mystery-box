@@ -32,6 +32,29 @@ export default function BoxAnimation({
   const hasLegendary = items.some((item) => item.rarity === "legendary");
   const soldIndicesRef = useRef<number[]>([]);
 
+  // Honest rarity tease: the shake glow is tinted by the best rarity
+  // actually inside this haul (gold shake = legendary incoming).
+  const bestRarity = hasLegendary
+    ? "legendary"
+    : items.some((i) => i.rarity === "epic")
+      ? "epic"
+      : items.some((i) => i.rarity === "rare")
+        ? "rare"
+        : "common";
+  const shakeGlow: Record<string, string> = {
+    legendary: "rgba(245, 158, 11, 0.85)",
+    epic: "rgba(139, 92, 246, 0.85)",
+    rare: "rgba(59, 130, 246, 0.8)",
+    common: "rgba(236, 72, 153, 0.8)",
+  };
+  const shakePulse: Record<string, [string, string]> = {
+    legendary: ["rgba(245,158,11,0.12)", "rgba(245,158,11,0.25)"],
+    epic: ["rgba(139,92,246,0.12)", "rgba(139,92,246,0.22)"],
+    rare: ["rgba(59,130,246,0.1)", "rgba(59,130,246,0.2)"],
+    common: ["rgba(139,92,246,0.1)", "rgba(236,72,153,0.2)"],
+  };
+  const [pulseA, pulseB] = shakePulse[bestRarity];
+
   // Start opening on mount
   useEffect(() => {
     if (phase === "idle") {
@@ -149,7 +172,7 @@ export default function BoxAnimation({
               }}
               transition={{ duration: 0.4, repeat: Infinity }}
               style={{
-                filter: `drop-shadow(0 0 60px rgba(236, 72, 153, 0.8))`,
+                filter: `drop-shadow(0 0 60px ${shakeGlow[bestRarity]})`,
               }}
             >
               {box?.emoji ?? "📦"}
@@ -158,9 +181,9 @@ export default function BoxAnimation({
               className="absolute inset-0"
               animate={{
                 background: [
-                  "radial-gradient(circle at center, rgba(139,92,246,0.1) 0%, transparent 70%)",
-                  "radial-gradient(circle at center, rgba(236,72,153,0.2) 0%, transparent 70%)",
-                  "radial-gradient(circle at center, rgba(139,92,246,0.1) 0%, transparent 70%)",
+                  `radial-gradient(circle at center, ${pulseA} 0%, transparent 70%)`,
+                  `radial-gradient(circle at center, ${pulseB} 0%, transparent 70%)`,
+                  `radial-gradient(circle at center, ${pulseA} 0%, transparent 70%)`,
                 ],
               }}
               transition={{ duration: 0.3, repeat: Infinity }}
@@ -197,6 +220,7 @@ export default function BoxAnimation({
                   item={item}
                   index={index}
                   isRevealed={index <= currentRevealIndex}
+                  isNext={index === currentRevealIndex + 1}
                   onReveal={handleRevealItem}
                 />
               ))}

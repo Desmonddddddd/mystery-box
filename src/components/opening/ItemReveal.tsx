@@ -9,8 +9,19 @@ interface ItemRevealProps {
   item: RewardItem;
   index: number;
   isRevealed: boolean;
+  /** True when this is the next card in the reveal sequence — its back
+   *  charges up with its real rarity color as a tease. */
+  isNext?: boolean;
   onReveal: () => void;
 }
+
+// Pre-flip tease glow on the card back (rare and better only).
+const teaseGlow: Record<RewardItem["rarity"], string | null> = {
+  common: null,
+  rare: "rgba(59, 130, 246, 0.45)",
+  epic: "rgba(139, 92, 246, 0.55)",
+  legendary: "rgba(245, 158, 11, 0.65)",
+};
 
 const rarityEffects = {
   common: {
@@ -39,9 +50,11 @@ export default function ItemReveal({
   item,
   index,
   isRevealed,
+  isNext = false,
   onReveal,
 }: ItemRevealProps) {
   const effects = rarityEffects[item.rarity];
+  const tease = isNext && !isRevealed ? teaseGlow[item.rarity] : null;
 
   return (
     <div
@@ -104,23 +117,33 @@ export default function ItemReveal({
         </motion.div>
 
         {/* Back face (unrevealed) */}
-        <div
+        <motion.div
           className="absolute inset-0 rounded-xl border border-white/10 bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm flex items-center justify-center"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            boxShadow:
-              "0 0 20px rgba(139, 92, 246, 0.2), inset 0 0 30px rgba(139, 92, 246, 0.1)",
           }}
+          animate={{
+            boxShadow: tease
+              ? [
+                  `0 0 15px ${tease}, inset 0 0 30px rgba(139, 92, 246, 0.1)`,
+                  `0 0 45px ${tease}, inset 0 0 30px rgba(139, 92, 246, 0.15)`,
+                  `0 0 15px ${tease}, inset 0 0 30px rgba(139, 92, 246, 0.1)`,
+                ]
+              : "0 0 20px rgba(139, 92, 246, 0.2), inset 0 0 30px rgba(139, 92, 246, 0.1)",
+          }}
+          transition={
+            tease ? { duration: 0.8, repeat: Infinity, ease: "easeInOut" } : {}
+          }
         >
           <motion.span
-            className="text-4xl font-black text-white/20"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            className={`text-4xl font-black ${tease ? "text-white/40" : "text-white/20"}`}
+            animate={{ scale: tease ? [1, 1.2, 1] : [1, 1.1, 1] }}
+            transition={{ duration: tease ? 0.8 : 2, repeat: Infinity }}
           >
             ?
           </motion.span>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Screen flash for epic */}
