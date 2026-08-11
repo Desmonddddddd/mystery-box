@@ -13,7 +13,11 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { onlineBoxes } from "@/data/onlineBoxes";
-import { openOnlineBox, onlineRarityWeights } from "@/lib/onlineLootEngine";
+import {
+  openOnlineBox,
+  onlineRarityWeights,
+  getTierDropTable,
+} from "@/lib/onlineLootEngine";
 import { cn } from "@/lib/utils";
 import type { OnlineBoxTier, DigitalReward } from "@/types";
 import GlowButton from "@/components/ui/GlowButton";
@@ -22,9 +26,21 @@ import { useUserStore } from "@/stores/userStore";
 import { useOnlineGameStore } from "@/stores/onlineGameStore";
 import { useGamificationStore } from "@/stores/gamificationStore";
 
+const RARITY_TEXT: Record<string, string> = {
+  common: "text-gray-300",
+  rare: "text-blue-300",
+  epic: "text-purple-300",
+  legendary: "text-amber-300",
+};
+
+function formatProbability(p: number): string {
+  return p >= 1 ? p.toFixed(1) : p.toFixed(2);
+}
+
 export default function VirtualPage() {
   const [selectedOnlineTier, setSelectedOnlineTier] =
     useState<OnlineBoxTier | null>(null);
+  const [dropTableTier, setDropTableTier] = useState<OnlineBoxTier>("starter");
   const [onlineResult, setOnlineResult] = useState<DigitalReward | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
 
@@ -417,6 +433,71 @@ export default function VirtualPage() {
                       })}
                     </tbody>
                   </table>
+                </div>
+
+                {/* ── Per-item drop table ── */}
+                <div className="mt-6 pt-5 border-t border-white/10">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+                    <h4 className="text-xs font-semibold text-white/70">
+                      Every possible reward, exact odds
+                    </h4>
+                    <label className="flex items-center gap-2 text-[11px] text-white/40">
+                      Box:
+                      <select
+                        value={dropTableTier}
+                        onChange={(e) =>
+                          setDropTableTier(e.target.value as OnlineBoxTier)
+                        }
+                        className="bg-dark-950 border border-white/15 rounded-lg px-2 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-500/50"
+                      >
+                        {onlineBoxes.map((box) => (
+                          <option key={box.id} value={box.id}>
+                            {box.name} — {box.gemCost.toLocaleString()} gems
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div className="overflow-x-auto max-h-72 overflow-y-auto rounded-lg border border-white/5">
+                    <table className="w-full text-xs text-left">
+                      <thead className="sticky top-0 bg-dark-950">
+                        <tr className="text-white/40 border-b border-white/10">
+                          <th className="py-2 px-3 font-medium">Reward</th>
+                          <th className="py-2 px-3 font-medium">Rarity</th>
+                          <th className="py-2 px-3 font-medium text-right">
+                            Chance
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {getTierDropTable(dropTableTier).map((entry, i) => (
+                          <tr
+                            key={entry.reward.id + i}
+                            className="border-b border-white/5 text-white/60"
+                          >
+                            <td className="py-1.5 px-3 whitespace-nowrap">
+                              {entry.reward.emoji} {entry.reward.name}
+                            </td>
+                            <td
+                              className={cn(
+                                "py-1.5 px-3 capitalize",
+                                RARITY_TEXT[entry.reward.rarity]
+                              )}
+                            >
+                              {entry.reward.rarity}
+                            </td>
+                            <td className="py-1.5 px-3 text-right tabular-nums">
+                              {formatProbability(entry.probability)}%
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-[10px] text-white/30 mt-2">
+                    Computed live from the same weights the engine rolls with —
+                    chances for each box sum to 100%.
+                  </p>
                 </div>
               </div>
             </details>

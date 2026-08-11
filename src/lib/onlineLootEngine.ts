@@ -58,3 +58,35 @@ export function openOnlineBox(tier: OnlineBoxTier): DigitalReward {
   const pool = getTierRewardPool(tier, rarity);
   return pickWeightedReward(pool);
 }
+
+// ─── Transparency: full per-item drop table ────────────────
+export interface DropTableEntry {
+  reward: DigitalReward;
+  /** Exact probability of this outcome per open, in percent (0–100). */
+  probability: number;
+}
+
+/**
+ * Every possible outcome for a tier with its exact probability, derived
+ * from the same weights `openOnlineBox` rolls with:
+ *   P(item) = P(rarity) × weight(item) / Σ weights(rarity pool)
+ * Probabilities across all entries sum to 100.
+ */
+export function getTierDropTable(tier: OnlineBoxTier): DropTableEntry[] {
+  const weights = onlineRarityWeights[tier];
+  const rarityTotal = RARITY_ORDER.reduce((sum, r) => sum + weights[r], 0);
+
+  const entries: DropTableEntry[] = [];
+  for (const rarity of RARITY_ORDER) {
+    const pool = getTierRewardPool(tier, rarity);
+    const poolTotal = pool.reduce((sum, entry) => sum + entry.weight, 0);
+    for (const { reward, weight } of pool) {
+      entries.push({
+        reward,
+        probability:
+          (weights[rarity] / rarityTotal) * (weight / poolTotal) * 100,
+      });
+    }
+  }
+  return entries;
+}
